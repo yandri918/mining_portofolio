@@ -27,10 +27,21 @@ TRANSLATIONS = {
         "pbi_nav": "Power BI + Python Integration",
         "pbi_tit": "Advanced Analytics in Power BI",
         "pbi_desc": "Demonstrating how to inject Python Machine Learning into Power BI dashboards—a critical skill for Mining Intelligence.",
-        "pbi_sub": "Demo: Geological Domain Clustering",
         "pbi_exp": "Power BI's native visuals are limited. By using Python scripts, we can perform advanced K-Means Clustering to automatically classify rock types based on assay data (Au, Cu, As).",
         "pbi_code_tit": "The Python Script for Power BI:",
         
+        "opt_nav": "Ore Blending Optimization (LP)",
+        "opt_tit": "Stockpile Blending Optimization",
+        "opt_desc": "Using **Linear Programming (Scipy)** to solve a complex real-world blending problem: Maximizing profit while adhering to strict mill constraints (Grade & Contaminants).",
+        "opt_prob": "The Challenge: Blend 3 Stockpiles to feed the Mill",
+        "opt_obj": "Objective: Minimize Cost (or Maximize Grade) subject to:",
+        "opt_cons": [
+            "1. Minimum Gold Grade > 1.40 g/t",
+            "2. Maximum Arsenic (As) < 480 ppm (Environmental Limit)",
+            "3. Total Mill Capacity = 5,000 tonnes/day"
+        ],
+        "ins_opt": "**Optimization Result:** The solver found the optimal blend! By mixing 60% of 'High Grade' with 40% of 'Low Grade' and avoiding 'High Arsenic', we achieved the target grade at the lowest possible cost.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -105,10 +116,21 @@ TRANSLATIONS = {
         "pbi_nav": "Integrasi Power BI + Python",
         "pbi_tit": "Analitik Lanjutan di Power BI",
         "pbi_desc": "Mendemonstrasikan cara menyisipkan Machine Learning Python ke dalam dashboard Power BI—keahlian kritis untuk Mining Intelligence.",
-        "pbi_sub": "Demo: Klasterisasi Domain Geologi",
         "pbi_exp": "Visual bawaan Power BI terbatas. Dengan skrip Python, kita bisa melakukan K-Means Clustering canggih untuk mengklasifikasikan tipe batuan secara otomatis berdasarkan data assay (Au, Cu, As).",
         "pbi_code_tit": "Skrip Python untuk Power BI:",
         
+        "opt_nav": "Optimasi Blending Bijih (Linear Programming)",
+        "opt_tit": "Optimasi Pencampuran Stockpile (Blending)",
+        "opt_desc": "Menggunakan **Linear Programming (Scipy)** untuk memecahkan masalah blending nyata: Memaksimalkan profit dengan mematuhi batasan ketat pabrik (Kadar & Kontaminan).",
+        "opt_prob": "Tantangan: Mencampur 3 Stockpile untuk Umpan Pabrik",
+        "opt_obj": "Tujuan: Meminimalkan Biaya (atau Maksimalkan Kadar) dengan syarat:",
+        "opt_cons": [
+            "1. Kadar Emas Minimum > 1.40 g/t",
+            "2. Kadar Arsenik (As) Maksimum < 480 ppm (Batas Lingkungan)",
+            "3. Kapasitas Total Pabrik = 5,000 ton/hari"
+        ],
+        "ins_opt": "**Hasil Optimasi:** Solver menemukan campuran optimal! Dengan mencampur 60% 'High Grade' dan 40% 'Low Grade' serta menghindari 'High Arsenic', kita mencapai target kadar dengan biaya terendah.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",
         "ins_trifr": "**Tren Keselamatan:** Peningkatan TRIFR di bulan Juni berkorelasi dengan periode penerimaan kontraktor baru. **Rekomendasi:** Tinjau ulang efektivitas induksi keselamatan untuk tenaga kerja kontraktor.",

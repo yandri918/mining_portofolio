@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -461,6 +461,94 @@ plt.title('Automated Geological Domains (K-Means)')
 plt.colorbar(label='Cluster ID')
 plt.show()
     """, language="python")
+
+# --- Page: Optimization (Linear Programming) ---
+elif page == t['opt_nav']:
+    st.title(t['opt_tit'])
+    st.markdown(t['opt_desc'])
+    
+    col1, col2 = st.columns([1, 1.5])
+    
+    with col1:
+        st.subheader(t['opt_prob'])
+        st.info(t['opt_obj'])
+        for c in t['opt_cons']:
+            st.text(c)
+            
+        # Interactive Inputs (Scenario Analysis)
+        target_grade = st.slider("Target: Minimum Au Grade (g/t)", 1.0, 2.0, 1.4, 0.1)
+        target_cap = st.number_input("Target: Mill Capacity (tpd)", 1000, 10000, 5000)
+
+    # Solve Linear Programming Problem using Scipy
+    from scipy.optimize import linprog
+
+    # Available Stockpiles (Data)
+    # SP A: High Grade (2.5 g/t), Low As (200 ppm), Expensive ($5/t)
+    # SP B: Low Grade (1.0 g/t), Low As (100 ppm), Cheap ($2/t)
+    # SP C: High Grade (2.0 g/t), High As (800 ppm), Medium ($3/t)
+    
+    # Variables: x0 (Tonnes A), x1 (Tonnes B), x2 (Tonnes C)
+    # Objective: Minimize Cost = 5*x0 + 2*x1 + 3*x2
+    c_obj = [5, 2, 3] 
+
+    # Constraints (Inequalities are <=, so we flip > signs)
+    # 1. Grade >= Target ->  -Grade*x <= -Target*Capacity 
+    # (Since total tonnage is fixed equality constraint below, we can simplify linear constraint as weighted average sum)
+    # Actually, simpler: Au*x0 + Au*x1 + Au*x2 >= Target * Total_Cap
+    # Rearranged: -2.5x0 - 1.0x1 - 2.0x2 <= -Target * Total_Cap
+    A_ub = [
+        [-2.5, -1.0, -2.0],        # Grade Constraint (Negative for >=)
+        [200, 100, 800]            # Arsenic Constraint (<= 480 ppm)
+    ]
+    b_ub = [
+        -target_grade * target_cap, # Min Grade * Total Tonnage
+        480 * target_cap            # Max As * Total Tonnage
+    ]
+
+    # Equality Constraint: x0 + x1 + x2 = Total_Cap
+    A_eq = [[1, 1, 1]]
+    b_eq = [target_cap]
+
+    # Bounds: Tonnage cannot be negative
+    bounds = [(0, None), (0, None), (0, None)]
+
+    res = linprog(c_obj, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method='highs')
+
+    with col2:
+        if res.success:
+            st.success("**Solver Status:** Optimal Solution Found! ✅")
+            
+            # Results
+            tonnes = res.x
+            total_tons = sum(tonnes)
+            final_grade = (tonnes[0]*2.5 + tonnes[1]*1.0 + tonnes[2]*2.0) / total_tons
+            final_as = (tonnes[0]*200 + tonnes[1]*100 + tonnes[2]*800) / total_tons
+            total_cost = res.fun
+            
+            # Metrics
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Final Grade (Au)", f"{final_grade:.2f} g/t", delta=f"{final_grade - target_grade:.2f}")
+            m2.metric("Final Arsenic", f"{final_as:.0f} ppm", delta=f"{480 - final_as:.0f} margin", delta_color="normal")
+            m3.metric("Total Cost", f"${total_cost:,.0f}")
+            
+            # Pie Chart Visualization of the Blend
+            blend_df = pd.DataFrame({
+                'Stockpile': ['SP A (High Grade)', 'SP B (Low Grade)', 'SP C (High As)'],
+                'Tonnes': tonnes
+            })
+            
+            fig_opt = px.pie(blend_df, values='Tonnes', names='Stockpile', 
+                             title=f"Optimal Blend Ratio (Total: {total_tons:,.0f} t)",
+                             color_discrete_sequence=px.colors.sequential.RdBu)
+            st.plotly_chart(fig_opt, use_container_width=True)
+            
+        else:
+            st.error(f"Solver Failed: {res.message}")
+            st.warning("Try lowering the Target Grade or increasing Allowable Arsenic.")
+            
+    # Insight Box
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_opt'])
 
 st.markdown("---")
 st.caption(t['footer'])
