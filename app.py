@@ -699,24 +699,39 @@ elif page == t['spc_nav']:
     st.title(t['spc_tit'])
     st.markdown(t['spc_desc'])
     
-    # Generate Synthetic Grade Data (30 days)
-    np.random.seed(789)
-    n_days = 30
-    dates = pd.date_range(end=pd.Timestamp.today(), periods=n_days, freq='D')
-    
-    # Simulate grade with some anomalies
-    base_grade = 1.8
-    grades = np.random.normal(base_grade, 0.2, n_days)
-    
-    # Inject anomalies (days 8, 15, 23)
-    grades[7] = 2.8  # High anomaly
-    grades[14] = 0.9  # Low anomaly
-    grades[22] = 2.6  # High anomaly
-    
-    df_spc = pd.DataFrame({
-        'Date': dates,
-        'Grade': grades
-    })
+    # Check if we have live data from Daily Ops Dashboard
+    if 'ops_data' in st.session_state and len(st.session_state.ops_data) > 0:
+        # USE LIVE DATA from Daily Ops
+        df_ops_raw = st.session_state.ops_data.copy()
+        df_ops_raw['Date'] = pd.to_datetime(df_ops_raw['Date'])
+        df_ops_raw = df_ops_raw.sort_values('Date')
+        
+        # Use Grade column from Daily Ops
+        df_spc = df_ops_raw[['Date', 'Grade']].copy()
+        df_spc = df_spc.rename(columns={'Grade': 'Grade'})
+        
+        st.info(f"📊 **Using LIVE data from Daily Ops Dashboard** ({len(df_spc)} reports)")
+    else:
+        # FALLBACK: Generate Synthetic Grade Data (30 days) for demo
+        st.warning("⚠️ No data from Daily Ops Dashboard. Using synthetic demo data. Submit reports in 'Daily Ops Dashboard' to see live SPC analysis!")
+        
+        np.random.seed(789)
+        n_days = 30
+        dates = pd.date_range(end=pd.Timestamp.today(), periods=n_days, freq='D')
+        
+        # Simulate grade with some anomalies
+        base_grade = 1.8
+        grades = np.random.normal(base_grade, 0.2, n_days)
+        
+        # Inject anomalies (days 8, 15, 23)
+        grades[7] = 2.8  # High anomaly
+        grades[14] = 0.9  # Low anomaly
+        grades[22] = 2.6  # High anomaly
+        
+        df_spc = pd.DataFrame({
+            'Date': dates,
+            'Grade': grades
+        })
     
     # Calculate Control Limits (X-bar chart)
     mean_grade = df_spc['Grade'].mean()
