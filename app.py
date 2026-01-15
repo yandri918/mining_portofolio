@@ -151,83 +151,156 @@ elif page == t['forecast_nav']:
     st.info("Note: This is a linear projection for demonstration purposes. Real-world mining forecasting would incorporate commodity prices, production volumes, and global demand indices.")
 
 # --- Page: Safety Demos ---
+# --- Page: Safety Demos ---
 elif page == t['safety_nav']:
     st.title(t['safety_tit'])
     st.markdown(t['safety_desc'])
     
-    # 1. Incident Analysis
+    # 1. Incident Analysis (TRIFR)
     st.subheader(t['sub_incidents'])
     st.markdown(t['desc_incidents'])
     
-    # Generate Synthetic Incident Data
-    incident_data = pd.DataFrame({
-        'Month': pd.date_range(start='2023-01-01', periods=12, freq='M'),
-        'Near_Miss': np.random.randint(5, 20, 12),
-        'Minor_Incident': np.random.randint(0, 5, 12),
-        'LTI': [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0] # Lost Time Injuries
+    # Generate Synthetic Data with TRIFR Logic
+    months = pd.date_range(start='2023-01-01', periods=12, freq='M')
+    man_hours = np.random.normal(50000, 2000, 12) # ~50k hours/month
+    lti_count = np.array([0, 0, 1, 0, 0, 2, 0, 0, 1, 0, 0, 0]) # Lost Time Injuries
+    
+    # Calculate TRIFR: (LTI * 1,000,000) / Man Hours (Simplified to just LTI for demo)
+    # Real world includes MTI + RWI usually
+    trifr = (lti_count * 1_000_000) / man_hours
+    
+    incident_df = pd.DataFrame({
+        'Month': months,
+        'LTI': lti_count,
+        'Man_Hours': man_hours,
+        'TRIFR': trifr
     })
     
     fig_inc = go.Figure()
-    fig_inc.add_trace(go.Bar(x=incident_data['Month'], y=incident_data['Near_Miss'], name='Near Miss', marker_color='#F1C40F'))
-    fig_inc.add_trace(go.Bar(x=incident_data['Month'], y=incident_data['Minor_Incident'], name='Minor Incident', marker_color='#E67E22'))
-    fig_inc.add_trace(go.Scatter(x=incident_data['Month'], y=incident_data['LTI'], name='LTI (Lost Time)', mode='lines+markers', line=dict(color='#E74C3C', width=3)))
+    # Bar for Raw Counts
+    fig_inc.add_trace(go.Bar(
+        x=incident_df['Month'], 
+        y=incident_df['LTI'], 
+        name='LTI Count', 
+        marker_color='#E74C3C'
+    ))
     
-    fig_inc.update_layout(title="Monthly Safety Incidents (Synthetic)", barmode='stack', template='plotly_dark')
+    # Line for Rate (TRIFR) on Secondary Axis
+    fig_inc.add_trace(go.Scatter(
+        x=incident_df['Month'], 
+        y=incident_df['TRIFR'], 
+        name='TRIFR', 
+        yaxis='y2',
+        mode='lines+markers',
+        line=dict(color='#F1C40F', width=3)
+    ))
+    
+    fig_inc.update_layout(
+        title="Safety Performance: LTI vs TRIFR (12 Months)",
+        xaxis_title="Month",
+        yaxis=dict(title="LTI Count"),
+        yaxis2=dict(
+            title="TRIFR (per 1M hours)",
+            overlaying='y',
+            side='right',
+            range=[0, 50]
+        ),
+        template='plotly_dark',
+        legend=dict(orientation="h", y=1.1)
+    )
     st.plotly_chart(fig_inc, use_container_width=True)
     
     st.divider()
     
-    # 2. Leading Indicators: Fatigue
+    # 2. Leading Indicators: Fatigue (PVT Proxy)
     st.subheader(t['sub_indicators'])
     st.markdown(t['desc_indicators'])
     
-    # Synthetic Fatigue Data
-    n_workers = 50
-    fatigue_data = pd.DataFrame({
-        'Shift_Hour': np.random.uniform(0, 12, n_workers),
-        'Hours_Slept': np.random.uniform(4, 9, n_workers),
+    # Synthetic PVT Data
+    n_tests = 100
+    pvt_df = pd.DataFrame({
+        'Shift_Hour': np.random.uniform(0, 12, n_tests),
+        'Operator_ID': np.random.randint(100, 120, n_tests)
     })
-    # Fatigue Score = higher shift hour + lower sleep
-    fatigue_data['Fatigue_Risk'] = (fatigue_data['Shift_Hour'] * 0.5) + ((9 - fatigue_data['Hours_Slept']) * 1.5)
+    
+    # Reaction time degrades (increases) as shift hour increases
+    # Base reaction 250ms + random noise + fatigue factor
+    pvt_df['Reaction_Time_ms'] = 250 + (pvt_df['Shift_Hour'] ** 2) * 1.5 + np.random.normal(0, 30, n_tests)
+    
+    # Risk Classification
+    def get_risk(rt):
+        if rt < 350: return 'Low'
+        elif rt < 500: return 'Moderate'
+        else: return 'Critical'
+        
+    pvt_df['Fatigue_Risk'] = pvt_df['Reaction_Time_ms'].apply(get_risk)
     
     fig_fatigue = px.scatter(
-        fatigue_data, 
+        pvt_df, 
         x='Shift_Hour', 
-        y='Fatigue_Risk',
-        size='Fatigue_Risk',
+        y='Reaction_Time_ms',
         color='Fatigue_Risk',
-        color_continuous_scale='Redor',
-        labels={'Shift_Hour': 'Hours into Shift', 'Fatigue_Risk': 'Fatigue Risk Score'},
-        title="Worker Fatigue Risk Leading Indicator"
+        color_discrete_map={'Low': '#2ECC71', 'Moderate': '#F39C12', 'Critical': '#C0392B'},
+        size='Reaction_Time_ms',
+        title="Operator Fatigue Analysis: Reaction Time vs Shift Duration",
+        labels={'Reaction_Time_ms': 'PVT Reaction Time (ms)', 'Shift_Hour': 'Hours into Shift'}
     )
-    # Add safe threshold line
-    fig_fatigue.add_hline(y=8, line_dash="dash", line_color="red", annotation_text="Critical Risk Threshold")
     
+    fig_fatigue.add_hline(y=500, line_dash="drive", line_color="red", annotation_text="Intervention Threshold")
     st.plotly_chart(fig_fatigue, use_container_width=True)
     
     st.divider()
     
-    # 3. Predictive Maintenance
+    # 3. Condition Monitoring (Multivariate)
     st.subheader(t['sub_maint'])
     st.markdown(t['desc_maint'])
     
-    # Synthetic Sensor Data
-    time_series = pd.date_range(start='2024-01-01', periods=100, freq='H')
-    # Normal operation + increasing vibration trend
-    base_signal = np.random.normal(50, 2, 100)
-    degradation = np.linspace(0, 20, 100) # Gradual wear
-    vibration = base_signal + degradation
+    # Generate Dual Sensor Data
+    t_steps = 100
+    time_points = pd.date_range(start='2024-06-01', periods=t_steps, freq='H')
     
-    # Threshold breach at index 80
-    vibration[80:] += 10 # Sudden fault development
+    # Vibration: Stable then spikes
+    vib = np.random.normal(4.5, 0.2, t_steps)           # Baseline 4.5 mm/s
+    vib[70:] += np.linspace(0, 4.0, 30)                 # Gradual failure onset
     
-    sensor_df = pd.DataFrame({'Time': time_series, 'Vibration_Hz': vibration})
+    # Temperature: Leads vibration spike slightly (e.g. friction heat)
+    temp = np.random.normal(85, 2, t_steps)             # Baseline 85°C
+    temp[65:] += np.linspace(0, 25, 35)                 # Heat starts rising earlier
     
-    fig_sensor = px.line(sensor_df, x='Time', y='Vibration_Hz', title="Haul Truck Engine Vibration Sensor")
-    fig_sensor.add_hline(y=70, line_dash="dash", line_color="orange", annotation_text="Warning Threshold")
-    fig_sensor.add_hline(y=80, line_dash="dash", line_color="red", annotation_text="Critical Failure Threshold")
+    cm_df = pd.DataFrame({'Time': time_points, 'Vibration': vib, 'Oil_Temp': temp})
     
-    st.plotly_chart(fig_sensor, use_container_width=True)
+    fig_cm = go.Figure()
+    
+    # Trace 1: Vibration
+    fig_cm.add_trace(go.Scatter(
+        x=cm_df['Time'], y=cm_df['Vibration'],
+        name='Vibration (mm/s)',
+        line=dict(color='#3498DB')
+    ))
+    
+    # Trace 2: Temperature (Secondary Axis)
+    fig_cm.add_trace(go.Scatter(
+        x=cm_df['Time'], y=cm_df['Oil_Temp'],
+        name='Oil Temp (°C)',
+        yaxis='y2',
+        line=dict(color='#E67E22', dash='dot')
+    ))
+    
+    fig_cm.update_layout(
+        title="Final Drive Diagnostics: Temp vs Vibration Correlation",
+        yaxis=dict(title="Vibration (mm/s)"),
+        yaxis2=dict(
+            title="Oil Temperature (°C)",
+            overlaying='y',
+            side='right'
+        ),
+        template='plotly_dark'
+    )
+    
+    # Annotation for insight
+    fig_cm.add_vrect(x0=time_points[65], x1=time_points[75], fillcolor="yellow", opacity=0.2, annotation_text="Thermal Onset", annotation_position="top left")
+    
+    st.plotly_chart(fig_cm, use_container_width=True)
 
 st.markdown("---")
 st.caption(t['footer'])
