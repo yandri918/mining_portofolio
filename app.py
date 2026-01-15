@@ -461,6 +461,9 @@ plt.title('Automated Geological Domains (K-Means)')
 plt.colorbar(label='Cluster ID')
 plt.show()
     """, language="python")
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_pbi'])
 
 # --- Page: Optimization (Linear Programming) ---
 elif page == t['opt_nav']:
