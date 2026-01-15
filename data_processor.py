@@ -60,6 +60,9 @@ def load_and_process_data(filepath):
     # Remove non-numeric characters from Year (e.g. "2014/p" -> "2014")
     df_long['Year'] = df_long['Year'].astype(str).str.replace(r'\D+', '', regex=True).astype(int)
     
+    # Drop any rows where GDP parsing failed (NaNs)
+    df_long = df_long.dropna(subset=['GDP'])
+    
     return df_long
 
 def get_mining_stats(df_long):
