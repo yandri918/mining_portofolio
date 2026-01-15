@@ -209,6 +209,9 @@ elif page == t['safety_nav']:
     )
     st.plotly_chart(fig_inc, use_container_width=True)
     
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_trifr'])
+    
     st.divider()
     
     # 2. Leading Indicators: Fatigue (PVT Proxy)
@@ -247,6 +250,9 @@ elif page == t['safety_nav']:
     
     fig_fatigue.add_hline(y=500, line_dash="dash", line_color="red", annotation_text="Intervention Threshold")
     st.plotly_chart(fig_fatigue, use_container_width=True)
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.warning(t['ins_fatigue'])
     
     st.divider()
     
@@ -299,6 +305,9 @@ elif page == t['safety_nav']:
     fig_cm.add_vrect(x0=time_points[65], x1=time_points[75], fillcolor="yellow", opacity=0.2, annotation_text="Thermal Onset", annotation_position="top left")
     
     st.plotly_chart(fig_cm, use_container_width=True)
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_maint'])
 
 # --- Page: Production Optimization ---
 elif page == t['prod_nav']:
@@ -328,6 +337,9 @@ elif page == t['prod_nav']:
     )
     st.plotly_chart(fig_rec, use_container_width=True)
     
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_yield'])
+    
     st.divider()
     
     # 2. Drill & Blast: Fragmentation
@@ -354,6 +366,9 @@ elif page == t['prod_nav']:
     )
     st.plotly_chart(fig_blast, use_container_width=True)
     
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_drill'])
+    
     st.divider()
     
     # 3. Fleet Management
@@ -379,6 +394,9 @@ elif page == t['prod_nav']:
         labels={'Cycle_Time_min': 'Cycle Time (minutes)', 'Truck_ID': 'Haul Truck ID'}
     )
     st.plotly_chart(fig_fleet, use_container_width=True)
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.warning(t['ins_fleet'])
 
 # --- Page: Power BI + Python ---
 elif page == t['pbi_nav']:

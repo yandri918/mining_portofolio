@@ -30,6 +30,16 @@ TRANSLATIONS = {
         "pbi_sub": "Demo: Geological Domain Clustering",
         "pbi_exp": "Power BI's native visuals are limited. By using Python scripts, we can perform advanced K-Means Clustering to automatically classify rock types based on assay data (Au, Cu, As).",
         "pbi_code_tit": "The Python Script for Power BI:",
+        
+        # --- Professional Insights (New) ---
+        "ins_safe_tit": "💡 Operational Insight",
+        "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
+        "ins_fatigue": "**Risk Alert:** 18% of operators show 'Critical' fatigue risk after the 9th hour of Night Shift. **Recommendation:** Implement stricter rest break enforcement between 3 AM - 5 AM.",
+        "ins_maint": "**Predictive Alert:** Thermal runaway generally precedes vibration spikes by ~4 hours. **Action:** Auto-trigger work order for bearing inspection when Oil Temp > 95°C.",
+        
+        "ins_yield": "**Process Control:** Creating a 'Digital Twin' of the plant suggests that increasing reagent dosage to 450ppm only yields economic ROI when Feed Grade exceeds 3.5 g/t.",
+        "ins_drill": "**Mine-to-Mill:** Current blasting is generating 15% oversize. Reducing pattern spacing by 0.5m could validly increase Excavator Dig Rates by 200 tph.",
+        "ins_fleet": "**Bottleneck ID:** Truck DT104 shows consistent delays on the waste dump circuit. **Action:** Schedule mechanical inspection for suspension/engine power issues.",
 
         "role": "Data Scientist | Mining Specialist",
         "intro_title": "Mining Data Science Portfolio",
@@ -98,6 +108,16 @@ TRANSLATIONS = {
         "pbi_sub": "Demo: Klasterisasi Domain Geologi",
         "pbi_exp": "Visual bawaan Power BI terbatas. Dengan skrip Python, kita bisa melakukan K-Means Clustering canggih untuk mengklasifikasikan tipe batuan secara otomatis berdasarkan data assay (Au, Cu, As).",
         "pbi_code_tit": "Skrip Python untuk Power BI:",
+        
+        # --- Professional Insights (New) ---
+        "ins_safe_tit": "💡 Wawasan Operasional",
+        "ins_trifr": "**Tren Keselamatan:** Peningkatan TRIFR di bulan Juni berkorelasi dengan periode penerimaan kontraktor baru. **Rekomendasi:** Tinjau ulang efektivitas induksi keselamatan untuk tenaga kerja kontraktor.",
+        "ins_fatigue": "**Peringatan Risiko:** 18% operator menunjukkan risiko kelelahan 'Kritis' setelah jam ke-9 Shift Malam. **Rekomendasi:** Terapkan istirahat wajib yang lebih ketat antara jam 03:00 - 05:00.",
+        "ins_maint": "**Peringatan Prediktif:** Kenaikan suhu termal mendahului lonjakan getaran sekitar 4 jam. **Tindakan:** Picu Work Order otomatis untuk inspeksi bearing saat Suhu Oli > 95°C.",
+        
+        "ins_yield": "**Kontrol Proses:** 'Digital Twin' pabrik menyarankan bahwa peningkatan dosis reagen ke 450ppm hanya memberikan ROI ekonomis jika Kadar Umpan > 3.5 g/t.",
+        "ins_drill": "**Mine-to-Mill:** Peledakan saat ini menghasilkan 15% oversize. Mengurangi jarak spasi pola sebesar 0.5m dapat meningkatkan Dig Rate Excavator sebesar 200 tph.",
+        "ins_fleet": "**Identifikasi Bottleneck:** Truk DT104 konsisten mengalami keterlambatan di sirkuit waste dump. **Tindakan:** Jadwalkan inspeksi mekanis untuk masalah suspensi/mesin.",
 
         "role": "Data Scientist | Spesialis Pertambangan",
         "intro_title": "Portofolio Data Science Pertambangan",
