@@ -697,10 +697,12 @@ elif page == t['energy_nav']:
     
     with dca_col1:
         st.subheader("Reservoir Params")
-        qi = st.number_input("Initial Rate (qi) - bbl/day", 100, 5000, 1000)
-        di = st.slider("Initial Decline (Di) - %/year", 10, 90, 40) / 100
-        b_factor = st.slider("Arps b-factor", 0.0, 1.0, 0.4, 0.1, help="0=Exponential, 1=Harmonic. Typical Shale=0.4-0.8")
-        eco_limit = st.number_input("Economic Limit (bbl/day)", 10, 100, 50)
+        
+        # Added Tooltips for Education
+        qi = st.number_input("Initial Rate (qi) - bbl/day", 100, 5000, 1000, help=t['oil_help_qi'])
+        di = st.slider("Initial Decline (Di) - %/year", 10, 90, 40, help=t['oil_help_di']) / 100
+        b_factor = st.slider("Arps b-factor", 0.0, 1.0, 0.4, 0.1, help=t['oil_help_b'])
+        eco_limit = st.number_input("Economic Limit (bbl/day)", 10, 100, 50, help="Production level where cost > revenue. Below this, the well is shut down.")
         
     with dca_col2:
         # Time vector (Months)

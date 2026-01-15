@@ -60,6 +60,10 @@ TRANSLATIONS = {
         "oil_desc": "Using **Arps' Hyperbolic Decline** equation to forecast oil well production and estimate Estimated Ultimate Recovery (EUR).",
         "ins_coal": "**Marketing Strategy:** Blending 30% High Sulfur coal is viable *if* the discount penalty < $2.50/ton. Otherwise, wash plant processing is required.",
         "ins_oil": "**Reservoir Audit:** The well is entering late-life exponential decline. Artificial Lift (ESP) installation is recommended to extend economic life by 18 months.",
+        
+        "oil_help_qi": "**Initial Rate (Qi):** The starting production volume (barrels/day) when the well is first opened. Higher = Faster Payback.",
+        "oil_help_di": "**Decline Rate (Di):** How fast production drops per year. 40% is steep (Shale), 10% is gradual (Conventional).",
+        "oil_help_b": "**Hyperbolic Factor (b):** The 'curve' shape. 0 = Exponential (fast drop), 1 = Harmonic (slow flattened drop). Shale wells typically have b=0.4-0.8.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
@@ -168,6 +172,10 @@ TRANSLATIONS = {
         "oil_desc": "Menggunakan persamaan **Arps' Hyperbolic Decline** untuk memprediksi produksi sumur minyak dan estimasi cadangan tersisa (EUR).",
         "ins_coal": "**Strategi Pemasaran:** Blending 30% Batubara High Sulfur layak dilakukan *jika* penalti diskon < $2.50/ton. Jika tidak, pencucian (washing) diperlukan.",
         "ins_oil": "**Audit Reservoir:** Sumur memasuki fase penurunan eksponensial akhir. Disarankan instalasi Artificial Lift (ESP) untuk memperpanjang usia ekonomis 18 bulan.",
+        
+        "oil_help_qi": "**Initial Rate (Qi):** Volume produksi awal (barel/hari) saat sumur pertama kali dibuka. Semakin tinggi = Balik modal lebih cepat.",
+        "oil_help_di": "**Decline Rate (Di):** Seberapa cepat produksi turun per tahun. 40% = Curam (Shale), 10% = Landai (Konvensional).",
+        "oil_help_b": "**Hyperbolic Factor (b):** Bentuk kelengkungan grafik. 0 = Eksponensial (turun cepat), 1 = Harmonik (melandai). Sumur Shale biasanya b=0.4-0.8.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",
