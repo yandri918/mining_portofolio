@@ -105,6 +105,14 @@ TRANSLATIONS = {
         "geo_filter_tit": "Grade Cutoff Filter",
         "ins_geo": "**Resource Targeting:** The 3D model identified a high-grade zone (>3 g/t Au) at 150m depth in the northeast sector. Prioritizing this area for next quarter's drilling could add 50,000 oz to reserves.",
 
+        "spc_nav": "Anomaly Detection (SPC)",
+        "spc_tit": "Statistical Process Control for Grade Monitoring",
+        "spc_desc": "Using **Control Charts (X-bar & R-chart)** to detect grade anomalies in real-time. This prevents quality issues from going undetected for days or weeks.",
+        "spc_xbar_tit": "X-bar Chart (Average Grade)",
+        "spc_r_tit": "R-Chart (Grade Variability)",
+        "spc_alert_tit": "Anomaly Alerts",
+        "ins_spc": "**Quality Assurance:** The SPC system detected 3 out-of-control points in the last 30 days, triggering immediate investigation. Root cause: Contamination from waste rock mixing. Corrective action saved $500k in processing losses.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -256,6 +264,14 @@ TRANSLATIONS = {
         "geo_2d_tit": "Tampilan Plan 2D (Heatmap)",
         "geo_filter_tit": "Filter Cutoff Grade",
         "ins_geo": "**Target Sumber Daya:** Model 3D mengidentifikasi zona berkadar tinggi (>3 g/t Au) pada kedalaman 150m di sektor timur laut. Memprioritaskan area ini untuk drilling kuartal depan dapat menambah 50.000 oz ke cadangan.",
+
+        "spc_nav": "Anomaly Detection (SPC)",
+        "spc_tit": "Statistical Process Control untuk Monitoring Grade",
+        "spc_desc": "Menggunakan **Control Charts (X-bar & R-chart)** untuk mendeteksi anomali kadar secara real-time. Ini mencegah masalah kualitas tidak terdeteksi berhari-hari atau berminggu-minggu.",
+        "spc_xbar_tit": "X-bar Chart (Rata-rata Kadar)",
+        "spc_r_tit": "R-Chart (Variabilitas Kadar)",
+        "spc_alert_tit": "Alert Anomali",
+        "ins_spc": "**Quality Assurance:** Sistem SPC mendeteksi 3 titik out-of-control dalam 30 hari terakhir, memicu investigasi segera. Akar masalah: Kontaminasi dari waste rock tercampur. Tindakan korektif menghemat $500k kerugian processing.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",

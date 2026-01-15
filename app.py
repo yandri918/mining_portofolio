@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['pdm_nav'], t['geo_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['pdm_nav'], t['geo_nav'], t['spc_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -693,6 +693,129 @@ elif page == t['geo_nav']:
     
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.success(t['ins_geo'])
+
+# --- Page: Anomaly Detection (SPC) ---
+elif page == t['spc_nav']:
+    st.title(t['spc_tit'])
+    st.markdown(t['spc_desc'])
+    
+    # Generate Synthetic Grade Data (30 days)
+    np.random.seed(789)
+    n_days = 30
+    dates = pd.date_range(end=pd.Timestamp.today(), periods=n_days, freq='D')
+    
+    # Simulate grade with some anomalies
+    base_grade = 1.8
+    grades = np.random.normal(base_grade, 0.2, n_days)
+    
+    # Inject anomalies (days 8, 15, 23)
+    grades[7] = 2.8  # High anomaly
+    grades[14] = 0.9  # Low anomaly
+    grades[22] = 2.6  # High anomaly
+    
+    df_spc = pd.DataFrame({
+        'Date': dates,
+        'Grade': grades
+    })
+    
+    # Calculate Control Limits (X-bar chart)
+    mean_grade = df_spc['Grade'].mean()
+    std_grade = df_spc['Grade'].std()
+    
+    ucl = mean_grade + 3 * std_grade  # Upper Control Limit
+    lcl = mean_grade - 3 * std_grade  # Lower Control Limit
+    
+    # Detect Out of Control points
+    df_spc['OOC'] = (df_spc['Grade'] > ucl) | (df_spc['Grade'] < lcl)
+    anomalies = df_spc[df_spc['OOC']]
+    
+    # X-bar Chart
+    st.subheader(t['spc_xbar_tit'])
+    
+    fig_xbar = go.Figure()
+    
+    # Normal points
+    normal_points = df_spc[~df_spc['OOC']]
+    fig_xbar.add_trace(go.Scatter(
+        x=normal_points['Date'], 
+        y=normal_points['Grade'],
+        mode='lines+markers',
+        name='Grade',
+        line=dict(color='#3498DB', width=2),
+        marker=dict(size=8)
+    ))
+    
+    # Anomaly points
+    if len(anomalies) > 0:
+        fig_xbar.add_trace(go.Scatter(
+            x=anomalies['Date'],
+            y=anomalies['Grade'],
+            mode='markers',
+            name='Out of Control',
+            marker=dict(size=12, color='red', symbol='x', line=dict(width=2))
+        ))
+    
+    # Control Limits
+    fig_xbar.add_hline(y=mean_grade, line_dash="solid", line_color="white", annotation_text="Mean")
+    fig_xbar.add_hline(y=ucl, line_dash="dash", line_color="orange", annotation_text="UCL (+3σ)")
+    fig_xbar.add_hline(y=lcl, line_dash="dash", line_color="orange", annotation_text="LCL (-3σ)")
+    
+    fig_xbar.update_layout(
+        title="Grade Control Chart (X-bar)",
+        xaxis_title="Date",
+        yaxis_title="Gold Grade (g/t)",
+        template="plotly_dark",
+        height=400
+    )
+    
+    st.plotly_chart(fig_xbar, use_container_width=True)
+    
+    # R-Chart (Range/Variability)
+    st.subheader(t['spc_r_tit'])
+    
+    # Calculate moving range
+    df_spc['Range'] = df_spc['Grade'].diff().abs()
+    mean_range = df_spc['Range'].mean()
+    ucl_r = mean_range * 3.267  # D4 constant for n=2
+    
+    fig_r = go.Figure()
+    fig_r.add_trace(go.Scatter(
+        x=df_spc['Date'],
+        y=df_spc['Range'],
+        mode='lines+markers',
+        name='Range',
+        line=dict(color='#E74C3C', width=2)
+    ))
+    
+    fig_r.add_hline(y=mean_range, line_dash="solid", line_color="white", annotation_text="Mean Range")
+    fig_r.add_hline(y=ucl_r, line_dash="dash", line_color="orange", annotation_text="UCL")
+    
+    fig_r.update_layout(
+        title="Range Chart (R-Chart)",
+        xaxis_title="Date",
+        yaxis_title="Grade Range (g/t)",
+        template="plotly_dark",
+        height=300
+    )
+    
+    st.plotly_chart(fig_r, use_container_width=True)
+    
+    # Anomaly Alerts
+    st.subheader(t['spc_alert_tit'])
+    
+    if len(anomalies) > 0:
+        for idx, row in anomalies.iterrows():
+            date_str = row['Date'].strftime('%d %b %Y')
+            grade_val = row['Grade']
+            if grade_val > ucl:
+                st.error(f"⚠️ **Grade anomaly detected on {date_str}!** Grade: {grade_val:.2f} g/t (Above UCL). Investigate contamination or assay error.")
+            else:
+                st.warning(f"⚠️ **Grade anomaly detected on {date_str}!** Grade: {grade_val:.2f} g/t (Below LCL). Investigate dilution or ore loss.")
+    else:
+        st.success("✅ No anomalies detected. Process is in statistical control.")
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_spc'])
 
 # --- Page: Power BI + Python ---
 elif page == t['pbi_nav']:
