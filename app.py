@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['mc_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -549,6 +549,76 @@ elif page == t['opt_nav']:
     # Insight Box
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.info(t['ins_opt'])
+
+# --- Page: Monte Carlo Simulation ---
+elif page == t['mc_nav']:
+    st.title(t['mc_tit'])
+    st.markdown(t['mc_desc'])
+    
+    col1, col2 = st.columns([1, 2])
+    
+    with col1:
+        st.subheader("Simulation Parameters")
+        n_sim = st.slider("Iterations (N)", 1000, 10000, 5000, 1000)
+        
+        st.markdown("**Gold Price ($/oz)**")
+        price_min = st.number_input("Min Price", 1800, 2200, 2000)
+        price_mode = st.number_input("Most Likely", 2000, 2500, 2300)
+        price_max = st.number_input("Max Price", 2400, 3000, 2700)
+        
+        st.markdown("**Cost Parameters**")
+        cost_base = st.number_input("Base AISC ($/oz)", 1000, 1500, 1200)
+        volatility = st.slider("Cost Volatility (+/- %)", 5, 20, 10) / 100
+        
+    # Run Simulation
+    # 1. Generate Price Dist (Triangular)
+    prices = np.random.triangular(price_min, price_mode, price_max, n_sim)
+    
+    # 2. Generate Cost Dist (Uniform)
+    costs = np.random.uniform(cost_base * (1 - volatility), cost_base * (1 + volatility), n_sim)
+    
+    # 3. Calculate Profit Margin ($/oz)
+    margins = prices - costs
+    
+    # 4. Total Annual Profit at 100k oz production
+    annual_profit_m = margins * 100_000 / 1_000_000 # In Million USD
+    
+    # Stats
+    p10 = np.percentile(annual_profit_m, 10)
+    p50 = np.percentile(annual_profit_m, 50)
+    p90 = np.percentile(annual_profit_m, 90)
+    prob_loss = np.mean(annual_profit_m < 0) * 100
+    
+    with col2:
+        st.subheader(t['mc_res'])
+        
+        # Metrics
+        m1, m2, m3 = st.columns(3)
+        m1.metric("P90 (Conservative)", f"${p10:.1f} M") # P10 is low case
+        m2.metric("P50 (Expected)", f"${p50:.1f} M")
+        m3.metric("P10 (Optimistic)", f"${p90:.1f} M")   # P90 is high upside
+        
+        # Visualization
+        fig_mc = px.histogram(annual_profit_m, nbins=50, 
+                              title="Probabilistic Distribution of Annual Profit",
+                              labels={'value': 'Net Profit ($ Million)'},
+                              color_discrete_sequence=['#2ECC71'])
+        
+        fig_mc.add_vline(x=p10, line_dash="dash", line_color="white", annotation_text="P90 Risk")
+        fig_mc.add_vline(x=p50, line_dash="solid", line_color="white", annotation_text="P50 Median")
+        fig_mc.add_vline(x=p90, line_dash="dash", line_color="white", annotation_text="P10 Upside")
+        
+        fig_mc.update_layout(showlegend=False, template="plotly_dark")
+        st.plotly_chart(fig_mc, use_container_width=True)
+        
+        if prob_loss > 0:
+            st.error(f"⚠️ Risk Alert: There is a {prob_loss:.1f}% probability of losing money.")
+        else:
+            st.success("✅ Robust Economics: 0% Probability of Loss in these scenarios.")
+
+    # Insight Box
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_mc'])
 
 st.markdown("---")
 st.caption(t['footer'])

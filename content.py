@@ -42,6 +42,12 @@ TRANSLATIONS = {
         ],
         "ins_opt": "**Optimization Result:** The solver found the optimal blend! By mixing 60% of 'High Grade' with 40% of 'Low Grade' and avoiding 'High Arsenic', we achieved the target grade at the lowest possible cost.",
 
+        "mc_nav": "Financial Risk Simulation (Monte Carlo)",
+        "mc_tit": "Project Financial Risk Analysis",
+        "mc_desc": "Mining is risky. We use **Monte Carlo Simulation** to iterate 5,000 scenarios of Grid Prices and Operational Costs to determine the probability of achieving our Net Present Value (NPV) targets.",
+        "mc_res": "Simulation Results (N=5,000)",
+        "ins_mc": "**Investment Decision:** There is a **92% Probability** that this project will remain profitable even in worst-case scenarios. However, the wide variance ($5M - $25M) suggests high sensitivity to Gold Price volatility.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -130,6 +136,12 @@ TRANSLATIONS = {
             "3. Kapasitas Total Pabrik = 5,000 ton/hari"
         ],
         "ins_opt": "**Hasil Optimasi:** Solver menemukan campuran optimal! Dengan mencampur 60% 'High Grade' dan 40% 'Low Grade' serta menghindari 'High Arsenic', kita mencapai target kadar dengan biaya terendah.",
+
+        "mc_nav": "Simulasi Risiko Finansial (Monte Carlo)",
+        "mc_tit": "Analisis Risiko Finansial Proyek",
+        "mc_desc": "Pertambangan penuh risiko. Kita gunakan **Simulasi Monte Carlo** untuk iterasi 5,000 skenario Harga Emas dan Biaya Operasional guna menentukan probabilitas pencapaian target NPV.",
+        "mc_res": "Hasil Simulasi (N=5,000)",
+        "ins_mc": "**Keputusan Investasi:** Ada **Probabilitas 92%** proyek ini tetap untung bahkan di skenario terburuk. Namun, varians yang lebar ($5M - $25M) menunjukkan sensitivitas tinggi terhadap volatilitas Harga Emas.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",
