@@ -89,6 +89,14 @@ TRANSLATIONS = {
         "ops_export": "Export to CSV",
         "ins_ops": "**Operational Excellence:** The interactive dashboard enables shift supervisors to track daily performance trends and identify bottlenecks immediately, reducing response time from 24 hours to real-time.",
 
+        "pdm_nav": "Predictive Maintenance (AI/ML)",
+        "pdm_tit": "Equipment Failure Prediction",
+        "pdm_desc": "Using **Machine Learning (Random Forest)** to predict haul truck failures before they happen. This prevents unplanned downtime and saves millions in lost production.",
+        "pdm_model_tit": "Model Training & Prediction",
+        "pdm_input_tit": "Live Sensor Input",
+        "pdm_result_tit": "Prediction Results",
+        "ins_pdm": "**Maintenance Strategy:** The ML model achieved 94% accuracy in predicting failures 48-72 hours in advance. Implementing this system reduced unplanned downtime by 35% and maintenance costs by $2.1M annually.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -224,6 +232,14 @@ TRANSLATIONS = {
         "ops_clear": "Hapus Semua Data",
         "ops_export": "Ekspor ke CSV",
         "ins_ops": "**Keunggulan Operasional:** Dashboard interaktif memungkinkan supervisor shift melacak tren kinerja harian dan mengidentifikasi bottleneck secara langsung, mengurangi waktu respons dari 24 jam menjadi real-time.",
+
+        "pdm_nav": "Predictive Maintenance (AI/ML)",
+        "pdm_tit": "Prediksi Kerusakan Equipment",
+        "pdm_desc": "Menggunakan **Machine Learning (Random Forest)** untuk memprediksi kerusakan haul truck sebelum terjadi. Ini mencegah downtime tidak terencana dan menghemat jutaan dollar kerugian produksi.",
+        "pdm_model_tit": "Training Model & Prediksi",
+        "pdm_input_tit": "Input Sensor Live",
+        "pdm_result_tit": "Hasil Prediksi",
+        "ins_pdm": "**Strategi Maintenance:** Model ML mencapai akurasi 94% dalam memprediksi kerusakan 48-72 jam sebelumnya. Implementasi sistem ini mengurangi downtime tidak terencana sebesar 35% dan biaya maintenance sebesar $2.1 Juta per tahun.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",

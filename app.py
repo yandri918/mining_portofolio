@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['pdm_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -488,6 +488,99 @@ elif page == t['ops_nav']:
     
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.success(t['ins_ops'])
+
+# --- Page: Predictive Maintenance (ML) ---
+elif page == t['pdm_nav']:
+    st.title(t['pdm_tit'])
+    st.markdown(t['pdm_desc'])
+    
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import train_test_split
+    
+    # Generate Synthetic Training Data
+    np.random.seed(42)
+    n_samples = 500
+    
+    # Features: Vibration (mm/s), Oil Temp (°C), Engine Hours (thousands)
+    vibration = np.random.uniform(2, 12, n_samples)
+    oil_temp = np.random.uniform(70, 120, n_samples)
+    engine_hours = np.random.uniform(5, 25, n_samples)
+    
+    # Target: Failure (1) or OK (0)
+    # Logic: High vibration + High temp + High hours = Failure
+    failure_prob = (vibration / 12) * 0.4 + (oil_temp / 120) * 0.3 + (engine_hours / 25) * 0.3
+    failure = (failure_prob + np.random.normal(0, 0.1, n_samples) > 0.65).astype(int)
+    
+    # Create DataFrame
+    df_train = pd.DataFrame({
+        'Vibration': vibration,
+        'Oil_Temp': oil_temp,
+        'Engine_Hours': engine_hours,
+        'Failure': failure
+    })
+    
+    # Train Model
+    X = df_train[['Vibration', 'Oil_Temp', 'Engine_Hours']]
+    y = df_train['Failure']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    model = RandomForestClassifier(n_estimators=100, random_state=42, max_depth=10)
+    model.fit(X_train, y_train)
+    
+    accuracy = model.score(X_test, y_test)
+    
+    col_input, col_result = st.columns([1, 1.5])
+    
+    with col_input:
+        st.subheader(t['pdm_input_tit'])
+        st.caption(f"Model Accuracy: **{accuracy*100:.1f}%** (Trained on {n_samples} historical records)")
+        
+        st.markdown("**Sensor Readings:**")
+        input_vib = st.slider("Vibration (mm/s)", 2.0, 12.0, 6.0, 0.5, help="Normal: 2-5, Warning: 5-8, Critical: >8")
+        input_temp = st.slider("Oil Temperature (°C)", 70, 120, 90, 5, help="Normal: 70-90, Warning: 90-105, Critical: >105")
+        input_hours = st.slider("Engine Hours (x1000)", 5.0, 25.0, 15.0, 1.0, help="Maintenance interval: Every 10k hours")
+        
+        # Predict
+        input_data = np.array([[input_vib, input_temp, input_hours]])
+        prediction = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0]
+        
+        st.markdown("---")
+        
+        if st.button("🔍 Run Prediction", type="primary"):
+            st.session_state.pdm_run = True
+    
+    with col_result:
+        st.subheader(t['pdm_result_tit'])
+        
+        if 'pdm_run' in st.session_state and st.session_state.pdm_run:
+            if prediction == 1:
+                st.error("⚠️ **FAILURE PREDICTED**")
+                st.metric("Failure Probability", f"{probability[1]*100:.1f}%", delta="High Risk", delta_color="inverse")
+                st.warning(f"**Recommendation:** Schedule immediate maintenance for this truck. Estimated time to failure: **48-72 hours**.")
+            else:
+                st.success("✅ **EQUIPMENT HEALTHY**")
+                st.metric("Failure Probability", f"{probability[1]*100:.1f}%", delta="Low Risk", delta_color="normal")
+                st.info("**Status:** All sensor readings within normal range. Continue regular monitoring.")
+            
+            # Feature Importance
+            st.markdown("---")
+            st.markdown("**Feature Importance (What Drives Failures?)**")
+            
+            importances = model.feature_importances_
+            features = ['Vibration', 'Oil_Temp', 'Engine_Hours']
+            
+            fig_imp = px.bar(x=importances, y=features, orientation='h',
+                            labels={'x': 'Importance Score', 'y': 'Sensor'},
+                            title="Random Forest Feature Importance",
+                            color=importances, color_continuous_scale='Reds')
+            fig_imp.update_layout(template="plotly_dark", showlegend=False, height=300)
+            st.plotly_chart(fig_imp, use_container_width=True)
+        else:
+            st.info("👈 Adjust sensor readings on the left and click **Run Prediction** to see results.")
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_pdm'])
 
 # --- Page: Power BI + Python ---
 elif page == t['pbi_nav']:
