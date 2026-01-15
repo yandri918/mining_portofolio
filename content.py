@@ -48,6 +48,17 @@ TRANSLATIONS = {
         "mc_res": "Simulation Results (N=5,000)",
         "ins_mc": "**Investment Decision:** There is a **92% Probability** that this project will remain profitable even in worst-case scenarios. However, the wide variance ($5M - $25M) suggests high sensitivity to Gold Price volatility.",
 
+        "energy_nav": "Energy Sector (Coal & Oil)",
+        "energy_tit": "Energy: Coal Mining & Oil Gas",
+        "energy_desc": "Diversifying the portfolio to include **Thermal Coal** logistics and **Oil Reservoir** engineering.",
+        
+        "coal_tit": "1. Coal: Export Blending & Penalty Analysis",
+        "coal_desc": "Optimizing thermal coal shipments to meet power plant specifications (GAR 4200) while minimizing **Sulfur Penalties**.",
+        "oil_tit": "2. Oil & Gas: Decline Curve Analysis (DCA)",
+        "oil_desc": "Using **Arps' Hyperbolic Decline** equation to forecast oil well production and estimate Estimated Ultimate Recovery (EUR).",
+        "ins_coal": "**Marketing Strategy:** Blending 30% High Sulfur coal is viable *if* the discount penalty < $2.50/ton. Otherwise, wash plant processing is required.",
+        "ins_oil": "**Reservoir Audit:** The well is entering late-life exponential decline. Artificial Lift (ESP) installation is recommended to extend economic life by 18 months.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -142,6 +153,17 @@ TRANSLATIONS = {
         "mc_desc": "Pertambangan penuh risiko. Kita gunakan **Simulasi Monte Carlo** untuk iterasi 5,000 skenario Harga Emas dan Biaya Operasional guna menentukan probabilitas pencapaian target NPV.",
         "mc_res": "Hasil Simulasi (N=5,000)",
         "ins_mc": "**Keputusan Investasi:** Ada **Probabilitas 92%** proyek ini tetap untung bahkan di skenario terburuk. Namun, varians yang lebar ($5M - $25M) menunjukkan sensitivitas tinggi terhadap volatilitas Harga Emas.",
+
+        "energy_nav": "Sektor Energi (Batubara & Migas)",
+        "energy_tit": "Energi: Batubara & Minyak Gas",
+        "energy_desc": "Diversifikasi portofolio mencakup logistik **Batubara Termal** dan teknik **Reservoir Migas**.",
+        
+        "coal_tit": "1. Batubara: Blending & Analisis Penalti Ekspor",
+        "coal_desc": "Mengoptimalkan pengapalan batubara untuk memenuhi spek PLTU (GAR 4200) sambil meminimalkan **Penalti Sulfur**.",
+        "oil_tit": "2. Migas: Decline Curve Analysis (DCA)",
+        "oil_desc": "Menggunakan persamaan **Arps' Hyperbolic Decline** untuk memprediksi produksi sumur minyak dan estimasi cadangan tersisa (EUR).",
+        "ins_coal": "**Strategi Pemasaran:** Blending 30% Batubara High Sulfur layak dilakukan *jika* penalti diskon < $2.50/ton. Jika tidak, pencucian (washing) diperlukan.",
+        "ins_oil": "**Audit Reservoir:** Sumur memasuki fase penurunan eksponensial akhir. Disarankan instalasi Artificial Lift (ESP) untuk memperpanjang usia ekonomis 18 bulan.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",

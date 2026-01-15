@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['mc_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -619,6 +619,124 @@ elif page == t['mc_nav']:
     # Insight Box
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.info(t['ins_mc'])
+
+# --- Page: Energy Sector (Coal & Oil) ---
+elif page == t['energy_nav']:
+    st.title(t['energy_tit'])
+    st.markdown(t['energy_desc'])
+    
+    # --- Tab 1: Coal Trading ---
+    st.header(t['coal_tit'])
+    st.markdown(t['coal_desc'])
+    
+    col1, col2 = st.columns([1, 1.5])
+    
+    with col1:
+        st.subheader("Contract Specs (PLTU)")
+        spec_gar = st.number_input("Target GAR (kcal/kg)", 3800, 5000, 4200)
+        spec_sulfur = st.number_input("Max Sulfur (%)", 0.5, 2.0, 1.0, 0.1)
+        penalty_rate = st.number_input("Sulfur Penalty (USD/ton per 0.1%)", 0.5, 5.0, 2.0)
+        
+        st.markdown("---")
+        st.subheader("Blending Ratio")
+        # Simple slider for 2-product blend
+        blend_pct = st.slider("% Low CV / Low Sulfur Coal", 0, 100, 60)
+        
+    with col2:
+        # COAL DATA:
+        # A: Low CV (4000), Low S (0.4%) - "Eco Coal"
+        # B: High CV (4800), High S (1.8%) - "Dirty Coal"
+        
+        pct_a = blend_pct / 100
+        pct_b = 1 - pct_a
+        
+        final_gar = (pct_a * 4000) + (pct_b * 4800)
+        final_sulfur = (pct_a * 0.4) + (pct_b * 1.8)
+        
+        # Calculate Penalty
+        # Usually checking if Sulfur > Spec
+        sulfur_excess = max(0, final_sulfur - spec_sulfur)
+        # Penalty is per 0.1% excess
+        penalty_per_ton = (sulfur_excess / 0.1) * penalty_rate
+        
+        st.metric("Blended GAR", f"{final_gar:.0f} kcal/kg", delta=f"{final_gar - spec_gar:.0f}")
+        st.metric("Blended Sulfur", f"{final_sulfur:.2f} %", delta=f"{spec_sulfur - final_sulfur:.2f}", delta_color="normal")
+        
+        if penalty_per_ton > 0:
+            st.error(f"⚠️ SULFUR PENALTY APPLIED: ${penalty_per_ton:.2f} per ton")
+        else:
+            st.success("✅ NO PENALTY: Coal meets Sulfur specs.")
+            
+        # Chart
+        coal_df = pd.DataFrame({
+            'Metric': ['Calorific Value (kcal/kg)', 'Sulfur Content (%)'],
+            'Value': [final_gar, final_sulfur],
+            'Limit': [spec_gar, spec_sulfur]
+        })
+        
+        # Visualize Composition
+        fig_coal = go.Figure()
+        fig_coal.add_trace(go.Bar(name='Actual', x=coal_df['Metric'], y=coal_df['Value'], marker_color='#F39C12'))
+        fig_coal.add_trace(go.Bar(name='Contract Limit', x=coal_df['Metric'], y=coal_df['Limit'], marker_color='#7F8C8D'))
+        fig_coal.update_layout(barmode='group', title="Blended Quality vs Contract Spec", template='plotly_dark')
+        st.plotly_chart(fig_coal, use_container_width=True)
+
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_coal'])
+        
+    st.divider()
+    
+    # --- Tab 2: Oil & Gas (DCA) ---
+    st.header(t['oil_tit'])
+    st.markdown(t['oil_desc'])
+    
+    dca_col1, dca_col2 = st.columns([1, 2])
+    
+    with dca_col1:
+        st.subheader("Reservoir Params")
+        qi = st.number_input("Initial Rate (qi) - bbl/day", 100, 5000, 1000)
+        di = st.slider("Initial Decline (Di) - %/year", 10, 90, 40) / 100
+        b_factor = st.slider("Arps b-factor", 0.0, 1.0, 0.4, 0.1, help="0=Exponential, 1=Harmonic. Typical Shale=0.4-0.8")
+        eco_limit = st.number_input("Economic Limit (bbl/day)", 10, 100, 50)
+        
+    with dca_col2:
+        # Time vector (Months)
+        t_months = np.arange(0, 60, 1) # 5 Years
+        t_years = t_months / 12
+        
+        # Arps Equation: q(t) = qi / (1 + b * Di * t)^(1/b)
+        # Handle b=0 (Exponential) separately
+        if b_factor == 0:
+            qt = qi * np.exp(-di * t_years)
+        else:
+            qt = qi / ((1 + b_factor * di * t_years) ** (1/b_factor))
+            
+        # Calculate Cumulative Production (Approx integration)
+        cum_prod = np.cumsum(qt * 30.4) # Monthly sum
+        
+        # Find Economic Limit Cutoff
+        profitable_months = qt >= eco_limit
+        eur = np.sum(qt[profitable_months] * 30.4)
+        remaining_life = np.sum(profitable_months)
+        
+        st.metric("Estimated Ultimate Recovery (EUR)", f"{eur/1000:.1f} k bbl")
+        st.metric("Remaining Economic Life", f"{remaining_life:.0f} Months")
+        
+        # Chart
+        fig_oil = go.Figure()
+        fig_oil.add_trace(go.Scatter(x=t_months, y=qt, mode='lines', name='Production Rate', line=dict(color='#2ECC71', width=3)))
+        fig_oil.add_hline(y=eco_limit, line_dash="dash", line_color="red", annotation_text="Economic Limit")
+        
+        fig_oil.update_layout(
+            title="Production Forecast (Decline Curve)",
+            xaxis_title="Months",
+            yaxis_title="Oil Rate (bbl/day)",
+            template="plotly_dark"
+        )
+        st.plotly_chart(fig_oil, use_container_width=True)
+        
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.warning(t['ins_oil'])
 
 st.markdown("---")
 st.caption(t['footer'])
