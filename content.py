@@ -65,6 +65,10 @@ TRANSLATIONS = {
         "oil_help_di": "**Decline Rate (Di):** How fast production drops per year. 40% is steep (Shale), 10% is gradual (Conventional).",
         "oil_help_b": "**Hyperbolic Factor (b):** The 'curve' shape. 0 = Exponential (fast drop), 1 = Harmonic (slow flattened drop). Shale wells typically have b=0.4-0.8.",
 
+        "ref_tit": "3. Downstream: Oil Refining Optimization",
+        "ref_desc": "Simulating a **Crude Distillation Unit (CDU)**. We calculate the 'Gross Product Worth (GPW)' by splitting crude oil into fractions (LPG, Gasoline, Diesel, Jet Fuel) based on API Gravity.",
+        "ins_ref": "**Refinery Economics:** Processing 'Light Sweet' crude yields 15% more Gasoline than 'Heavy Sour', resulting in a +$12/bbl margin advantage despite the higher feedstock cost.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -176,6 +180,10 @@ TRANSLATIONS = {
         "oil_help_qi": "**Initial Rate (Qi):** Volume produksi awal (barel/hari) saat sumur pertama kali dibuka. Semakin tinggi = Balik modal lebih cepat.",
         "oil_help_di": "**Decline Rate (Di):** Seberapa cepat produksi turun per tahun. 40% = Curam (Shale), 10% = Landai (Konvensional).",
         "oil_help_b": "**Hyperbolic Factor (b):** Bentuk kelengkungan grafik. 0 = Eksponensial (turun cepat), 1 = Harmonik (melandai). Sumur Shale biasanya b=0.4-0.8.",
+
+        "ref_tit": "3. Hilir (Downstream): Optimasi Pengolahan Minyak",
+        "ref_desc": "Simulasi **Crude Distillation Unit (CDU)**. Kita menghitung 'Gross Product Worth (GPW)' dengan memecah minyak mentah menjadi fraksi (LPG, Bensin, Solar, Avtur) berdasarkan API Gravity.",
+        "ins_ref": "**Ekonomi Kilang:** Mengolah minyak 'Light Sweet' menghasilkan 15% lebih banyak Bensin dibanding 'Heavy Sour', memberikan keuntungan margin +$12/bbl meskipun harga bahan baku lebih mahal.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",

@@ -743,5 +743,74 @@ elif page == t['energy_nav']:
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.warning(t['ins_oil'])
 
+    st.divider()
+    
+    # --- Tab 3: Downstream (Refining) ---
+    st.header(t['ref_tit'])
+    st.markdown(t['ref_desc'])
+    
+    ref_col1, ref_col2 = st.columns([1, 2])
+    
+    with ref_col1:
+        st.subheader("Crude Feedstock")
+        crude_type = st.radio("Crude Type", ["Light Sweet (WTI)", "Heavy Sour (Maya)"], horizontal=True)
+        crude_price = st.number_input("Crude Price ($/bbl)", 50.0, 100.0, 75.0 if 'Light' in crude_type else 65.0)
+        
+        # Product Market Prices ($/bbl)
+        st.markdown("---")
+        st.markdown("**Product Prices ($/bbl)**")
+        p_gasoline = 95.0
+        p_diesel = 90.0
+        p_jet = 88.0
+        p_residue = 55.0 # Often less than crude cost
+        
+        st.caption(f"Gasoline: ${p_gasoline} | Diesel: ${p_diesel}")
+        
+    with ref_col2:
+        # Yield Logic (Simplified Model based on API)
+        if "Light" in crude_type:
+            # High API (~40): Good Gasoline/Diesel yield
+            yields = {'Gasoline': 0.45, 'Diesel': 0.30, 'Jet Fuel': 0.10, 'Residue': 0.15}
+        else:
+            # Low API (~22): High Residue
+            yields = {'Gasoline': 0.25, 'Diesel': 0.25, 'Jet Fuel': 0.05, 'Residue': 0.45}
+            
+        # Calculate GPW (Gross Product Worth)
+        gpw = (yields['Gasoline'] * p_gasoline + 
+               yields['Diesel'] * p_diesel + 
+               yields['Jet Fuel'] * p_jet + 
+               yields['Residue'] * p_residue)
+        
+        # Refining Margin (Crack Spread)
+        margin = gpw - crude_price
+        
+        col_res1, col_res2 = st.columns(2)
+        col_res1.metric("Gross Product Worth (GPW)", f"${gpw:.2f}/bbl")
+        col_res2.metric("Refining Margin", f"${margin:.2f}/bbl", delta=f"{margin/crude_price*100:.1f}% ROI")
+        
+        # Sankey Diagram (Mass Balance)
+        # Source: Crude (0)
+        # Targets: Gas(1), Diesel(2), Jet(3), Res(4)
+        
+        fig_sankey = go.Figure(data=[go.Sankey(
+            node = dict(
+                pad = 15,
+                thickness = 20,
+                line = dict(color = "black", width = 0.5),
+                label = ["Crude Oil (1 bbl)", "Gasoline", "Diesel", "Jet Fuel", "Residue/Asphalt"],
+                color = ["black", "#F1C40F", "#E67E22", "#3498DB", "#7F8C8D"]
+            ),
+            link = dict(
+                source = [0, 0, 0, 0], 
+                target = [1, 2, 3, 4],
+                value = [yields['Gasoline'], yields['Diesel'], yields['Jet Fuel'], yields['Residue']]
+            ))])
+        
+        fig_sankey.update_layout(title="Refinery Yield Mass Balance (Sankey)", font_size=10, height=400)
+        st.plotly_chart(fig_sankey, use_container_width=True)
+
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_ref'])
+
 st.markdown("---")
 st.caption(t['footer'])
