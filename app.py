@@ -246,7 +246,7 @@ elif page == t['safety_nav']:
         labels={'Reaction_Time_ms': 'PVT Reaction Time (ms)', 'Shift_Hour': 'Hours into Shift'}
     )
     
-    fig_fatigue.add_hline(y=500, line_dash="drive", line_color="red", annotation_text="Intervention Threshold")
+    fig_fatigue.add_hline(y=500, line_dash="dash", line_color="red", annotation_text="Intervention Threshold")
     st.plotly_chart(fig_fatigue, use_container_width=True)
     
     st.divider()
