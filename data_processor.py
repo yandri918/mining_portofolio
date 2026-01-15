@@ -41,6 +41,8 @@ def load_and_process_data(filepath):
     
     # Filter rows
     df['Sector'] = df['Sector'].str.strip() # Remove indentation whitespace
+    df['Sector'] = df['Sector'].str.replace('&amp;', '&', regex=False) # Fix HTML encoded ampersands
+    
     filtered_df = df[df['Sector'].isin(target_sectors.keys())].copy()
     
     # Remap names
