@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['pdm_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['pdm_nav'], t['geo_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -581,6 +581,118 @@ elif page == t['pdm_nav']:
     
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.success(t['ins_pdm'])
+
+# --- Page: Geospatial 3D (Ore Body) ---
+elif page == t['geo_nav']:
+    st.title(t['geo_tit'])
+    st.markdown(t['geo_desc'])
+    
+    # Generate Synthetic Drill Hole Data
+    np.random.seed(123)
+    n_holes = 200
+    
+    # X, Y: Surface coordinates (meters)
+    x_coords = np.random.uniform(0, 500, n_holes)
+    y_coords = np.random.uniform(0, 500, n_holes)
+    
+    # Z: Depth (negative, meters below surface)
+    z_coords = np.random.uniform(-250, -50, n_holes)
+    
+    # Grade: Gold g/t (higher grade in certain zones)
+    # Create a "hot zone" in the northeast (high X, high Y, mid depth)
+    distance_to_hotzone = np.sqrt((x_coords - 400)**2 + (y_coords - 400)**2 + (z_coords + 150)**2)
+    grade = 0.5 + (300 / (distance_to_hotzone + 50)) + np.random.normal(0, 0.3, n_holes)
+    grade = np.clip(grade, 0.1, 8.0)  # Realistic range
+    
+    df_drill = pd.DataFrame({
+        'X': x_coords,
+        'Y': y_coords,
+        'Z': z_coords,
+        'Grade_Au': grade
+    })
+    
+    col_filter, col_viz = st.columns([1, 3])
+    
+    with col_filter:
+        st.subheader(t['geo_filter_tit'])
+        
+        cutoff_grade = st.slider("Minimum Grade Cutoff (g/t Au)", 0.0, 5.0, 1.0, 0.5, 
+                                 help="Filter out low-grade samples. Economic cutoff is typically 0.5-1.5 g/t.")
+        
+        df_filtered = df_drill[df_drill['Grade_Au'] >= cutoff_grade]
+        
+        st.metric("Total Drill Samples", len(df_drill))
+        st.metric("Above Cutoff", len(df_filtered), delta=f"{len(df_filtered)/len(df_drill)*100:.1f}%")
+        st.metric("Avg Grade (Filtered)", f"{df_filtered['Grade_Au'].mean():.2f} g/t")
+        
+    with col_viz:
+        st.subheader(t['geo_3d_tit'])
+        
+        # 3D Scatter Plot
+        fig_3d = go.Figure(data=[go.Scatter3d(
+            x=df_filtered['X'],
+            y=df_filtered['Y'],
+            z=df_filtered['Z'],
+            mode='markers',
+            marker=dict(
+                size=5,
+                color=df_filtered['Grade_Au'],
+                colorscale='Viridis',
+                showscale=True,
+                colorbar=dict(title="Au (g/t)"),
+                cmin=0,
+                cmax=5
+            ),
+            text=[f"Grade: {g:.2f} g/t<br>Depth: {z:.0f}m" for g, z in zip(df_filtered['Grade_Au'], df_filtered['Z'])],
+            hoverinfo='text'
+        )])
+        
+        fig_3d.update_layout(
+            title="3D Ore Body Model (Drill Hole Assays)",
+            scene=dict(
+                xaxis_title='Easting (m)',
+                yaxis_title='Northing (m)',
+                zaxis_title='Elevation (m)',
+                camera=dict(eye=dict(x=1.5, y=1.5, z=1.2))
+            ),
+            template="plotly_dark",
+            height=500
+        )
+        
+        st.plotly_chart(fig_3d, use_container_width=True)
+    
+    st.divider()
+    
+    # 2D Heatmap (Plan View)
+    st.subheader(t['geo_2d_tit'])
+    
+    # Create grid for interpolation
+    from scipy.interpolate import griddata
+    
+    grid_x, grid_y = np.mgrid[0:500:50j, 0:500:50j]
+    grid_grade = griddata((df_filtered['X'], df_filtered['Y']), df_filtered['Grade_Au'], 
+                          (grid_x, grid_y), method='cubic', fill_value=0)
+    
+    fig_heatmap = go.Figure(data=go.Heatmap(
+        z=grid_grade,
+        x=np.linspace(0, 500, 50),
+        y=np.linspace(0, 500, 50),
+        colorscale='Hot',
+        colorbar=dict(title="Au (g/t)")
+    ))
+    
+    fig_heatmap.update_layout(
+        title="2D Grade Distribution (Plan View at Surface)",
+        xaxis_title="Easting (m)",
+        yaxis_title="Northing (m)",
+        template="plotly_dark",
+        height=400
+    )
+    
+    st.plotly_chart(fig_heatmap, use_container_width=True)
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_geo'])
 
 # --- Page: Power BI + Python ---
 elif page == t['pbi_nav']:

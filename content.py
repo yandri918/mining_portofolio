@@ -97,6 +97,14 @@ TRANSLATIONS = {
         "pdm_result_tit": "Prediction Results",
         "ins_pdm": "**Maintenance Strategy:** The ML model achieved 94% accuracy in predicting failures 48-72 hours in advance. Implementing this system reduced unplanned downtime by 35% and maintenance costs by $2.1M annually.",
 
+        "geo_nav": "Geospatial 3D (Ore Body)",
+        "geo_tit": "3D Geological Modeling & Mine Planning",
+        "geo_desc": "Visualizing drill hole assay data in 3D space to identify high-grade ore zones. This is critical for mine planning and resource estimation (JORC/NI 43-101 compliance).",
+        "geo_3d_tit": "3D Ore Body Visualization",
+        "geo_2d_tit": "2D Plan View (Heatmap)",
+        "geo_filter_tit": "Grade Cutoff Filter",
+        "ins_geo": "**Resource Targeting:** The 3D model identified a high-grade zone (>3 g/t Au) at 150m depth in the northeast sector. Prioritizing this area for next quarter's drilling could add 50,000 oz to reserves.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -240,6 +248,14 @@ TRANSLATIONS = {
         "pdm_input_tit": "Input Sensor Live",
         "pdm_result_tit": "Hasil Prediksi",
         "ins_pdm": "**Strategi Maintenance:** Model ML mencapai akurasi 94% dalam memprediksi kerusakan 48-72 jam sebelumnya. Implementasi sistem ini mengurangi downtime tidak terencana sebesar 35% dan biaya maintenance sebesar $2.1 Juta per tahun.",
+
+        "geo_nav": "Geospasial 3D (Ore Body)",
+        "geo_tit": "Pemodelan Geologi 3D & Perencanaan Tambang",
+        "geo_desc": "Visualisasi data assay lubang bor dalam ruang 3D untuk mengidentifikasi zona bijih berkadar tinggi. Ini krusial untuk perencanaan tambang dan estimasi sumber daya (JORC/NI 43-101).",
+        "geo_3d_tit": "Visualisasi Ore Body 3D",
+        "geo_2d_tit": "Tampilan Plan 2D (Heatmap)",
+        "geo_filter_tit": "Filter Cutoff Grade",
+        "ins_geo": "**Target Sumber Daya:** Model 3D mengidentifikasi zona berkadar tinggi (>3 g/t Au) pada kedalaman 150m di sektor timur laut. Memprioritaskan area ini untuk drilling kuartal depan dapat menambah 50.000 oz ke cadangan.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",
