@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -379,6 +379,70 @@ elif page == t['prod_nav']:
         labels={'Cycle_Time_min': 'Cycle Time (minutes)', 'Truck_ID': 'Haul Truck ID'}
     )
     st.plotly_chart(fig_fleet, use_container_width=True)
+
+# --- Page: Power BI + Python ---
+elif page == t['pbi_nav']:
+    st.title(t['pbi_tit'])
+    st.markdown(t['pbi_desc'])
+    
+    st.subheader(t['pbi_sub'])
+    st.info(t['pbi_exp'])
+    
+    # Synthetic Assay Data
+    n_samples = 300
+    assay_df = pd.DataFrame({
+        'Au_gpt': np.concatenate([np.random.normal(0.5, 0.1, 100), np.random.normal(2.5, 0.5, 100), np.random.normal(5.0, 1.0, 100)]),
+        'Cu_pct': np.concatenate([np.random.normal(0.1, 0.05, 100), np.random.normal(0.8, 0.2, 100), np.random.normal(0.2, 0.1, 100)]),
+        'As_ppm': np.concatenate([np.random.normal(50, 10, 100), np.random.normal(200, 50, 100), np.random.normal(500, 100, 100)])
+    })
+    
+    # K-Means Clustering (What we would do in Power BI)
+    from sklearn.cluster import KMeans
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    assay_df['Cluster'] = kmeans.fit_predict(assay_df[['Au_gpt', 'Cu_pct', 'As_ppm']])
+    assay_df['Cluster_Label'] = assay_df['Cluster'].map({0: 'Waste/Low Grade', 1: 'Oxide Ore', 2: 'Refractory/High As'})
+    
+    # 3D Visualization (Simulating Power BI Python Visual)
+    fig_3d = px.scatter_3d(
+        assay_df, x='Au_gpt', y='Cu_pct', z='As_ppm',
+        color='Cluster_Label',
+        title="3D Geological Domain Clustering (Python in Power BI)",
+        labels={'Au_gpt': 'Gold (g/t)', 'Cu_pct': 'Copper (%)', 'As_ppm': 'Arsenic (ppm)'},
+        color_discrete_map={'Waste/Low Grade': 'gray', 'Oxide Ore': 'green', 'Refractory/High As': 'red'}
+    )
+    st.plotly_chart(fig_3d, use_container_width=True)
+    
+    st.divider()
+    
+    st.markdown(f"#### {t['pbi_code_tit']}")
+    st.code("""
+# Power BI Python Script for Clustering:
+# --------------------------------------
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.cluster import KMeans
+
+# Power BI automatically loads the selected table into 'dataset'
+# Ensure you have 'pandas', 'scikit-learn', and 'matplotlib' installed in your Python environment.
+df = dataset.copy()
+
+# 1. Feature Selection
+X = df[['Au_gpt', 'Cu_pct', 'As_ppm']]
+
+# 2. Run K-Means Clustering (e.g. 3 Domains)
+model = KMeans(n_clusters=3, random_state=42)
+df['Cluster'] = model.fit_predict(X)
+
+# 3. Visualisation (Matplotlib is standard for PBI)
+plt.figure(figsize=(10, 6))
+# Scatter plot for 2 primary elements, colored by cluster
+plt.scatter(df['Au_gpt'], df['Cu_pct'], c=df['Cluster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Gold (g/t)')
+plt.ylabel('Copper (%)')
+plt.title('Automated Geological Domains (K-Means)')
+plt.colorbar(label='Cluster ID')
+plt.show()
+    """, language="python")
 
 st.markdown("---")
 st.caption(t['footer'])
