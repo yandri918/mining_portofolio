@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -150,7 +150,6 @@ elif page == t['forecast_nav']:
     
     st.info("Note: This is a linear projection for demonstration purposes. Real-world mining forecasting would incorporate commodity prices, production volumes, and global demand indices.")
 
-# --- Page: Safety Demos ---
 # --- Page: Safety Demos ---
 elif page == t['safety_nav']:
     st.title(t['safety_tit'])
@@ -297,10 +296,89 @@ elif page == t['safety_nav']:
         template='plotly_dark'
     )
     
-    # Annotation for insight
     fig_cm.add_vrect(x0=time_points[65], x1=time_points[75], fillcolor="yellow", opacity=0.2, annotation_text="Thermal Onset", annotation_position="top left")
     
     st.plotly_chart(fig_cm, use_container_width=True)
+
+# --- Page: Production Optimization ---
+elif page == t['prod_nav']:
+    st.title(t['prod_tit'])
+    st.markdown(t['prod_desc'])
+    
+    # 1. Processing Recovery Analysis
+    st.subheader(t['sub_yield'])
+    st.markdown(t['desc_yield'])
+    
+    # Synthetic Plant Data
+    n_batches = 100
+    plant_df = pd.DataFrame({
+        'Feed_Grade': np.random.uniform(1.5, 4.5, n_batches), # g/t
+        'Reagent_Dosage': np.random.uniform(200, 500, n_batches) # g/t
+    })
+    # Recovery is complex: Higher grade helps, optimum reagent helps
+    plant_df['Recovery'] = 85 + (plant_df['Feed_Grade'] * 2) - ((plant_df['Reagent_Dosage'] - 350)**2 / 5000)
+    plant_df['Recovery'] = plant_df['Recovery'].clip(80, 98) + np.random.normal(0, 0.5, n_batches)
+    
+    fig_rec = px.scatter(
+        plant_df, x='Feed_Grade', y='Recovery', color='Reagent_Dosage',
+        size='Reagent_Dosage',
+        labels={'Feed_Grade': 'Feed Grade (g/t)', 'Recovery': 'Recovery (%)', 'Reagent_Dosage': 'Cyanide Dosage (ppm)'},
+        title="Plant Recovery Optimization: Grade vs Reagent Impact",
+        color_continuous_scale='Viridis'
+    )
+    st.plotly_chart(fig_rec, use_container_width=True)
+    
+    st.divider()
+    
+    # 2. Drill & Blast: Fragmentation
+    st.subheader(t['sub_drill'])
+    st.markdown(t['desc_drill'])
+    
+    # Synthetic Blast Data
+    n_blasts = 50
+    blast_df = pd.DataFrame({
+        'Blast_ID': range(1, 51),
+        'Powder_Factor': np.random.uniform(0.6, 1.2, n_blasts), # kg/m3
+    })
+    # P80 Size (cm): Higher powder factor -> Smaller fragments
+    blast_df['P80_Size_cm'] = 80 - (blast_df['Powder_Factor'] * 40) + np.random.normal(0, 5, n_blasts)
+    # Dig Rate (t/h): Smaller fragments (lower P80) -> Faster digging
+    blast_df['Dig_Rate'] = 2000 - (blast_df['P80_Size_cm'] * 15) + np.random.normal(0, 50, n_blasts)
+    
+    fig_blast = px.scatter(
+        blast_df, x='P80_Size_cm', y='Dig_Rate', 
+        size='Powder_Factor', color='Powder_Factor',
+        labels={'P80_Size_cm': 'Fragmentation P80 (cm)', 'Dig_Rate': 'Excavator Dig Rate (t/h)'},
+        title="Drill & Blast: Impact of Fragmentation on Dig Rates",
+        trendline="ols"
+    )
+    st.plotly_chart(fig_blast, use_container_width=True)
+    
+    st.divider()
+    
+    # 3. Fleet Management
+    st.subheader(t['sub_fleet'])
+    st.markdown(t['desc_fleet'])
+    
+    # Synthetic Haul Cycle Data
+    n_cycles = 200
+    fleet_df = pd.DataFrame({
+        'Truck_ID': np.random.choice(['DT101', 'DT102', 'DT103', 'DT104'], n_cycles),
+        'Route': np.random.choice(['Pit A -> Crusher', 'Pit A -> Waste Dump', 'Pit B -> ROM'], n_cycles),
+        'Shift': np.random.choice(['Day', 'Night'], n_cycles)
+    })
+    
+    # Generate Cycle Times containing outliers
+    fleet_df['Cycle_Time_min'] = np.random.normal(25, 3, n_cycles)
+    # Add delays to specific truck (Maintenance issue?)
+    fleet_df.loc[fleet_df['Truck_ID'] == 'DT104', 'Cycle_Time_min'] += 8 
+    
+    fig_fleet = px.box(
+        fleet_df, x='Truck_ID', y='Cycle_Time_min', color='Shift',
+        title="Fleet Cycle Time Distribution: Identifying Slow Trucks",
+        labels={'Cycle_Time_min': 'Cycle Time (minutes)', 'Truck_ID': 'Haul Truck ID'}
+    )
+    st.plotly_chart(fig_fleet, use_container_width=True)
 
 st.markdown("---")
 st.caption(t['footer'])
