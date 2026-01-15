@@ -69,6 +69,16 @@ TRANSLATIONS = {
         "ref_desc": "Simulating a **Crude Distillation Unit (CDU)**. We calculate the 'Gross Product Worth (GPW)' by splitting crude oil into fractions (LPG, Gasoline, Diesel, Jet Fuel) based on API Gravity.",
         "ins_ref": "**Refinery Economics:** Processing 'Light Sweet' crude yields 15% more Gasoline than 'Heavy Sour', resulting in a +$12/bbl margin advantage despite the higher feedstock cost.",
 
+        "esg_nav": "Sustainability & ESG (Net Zero)",
+        "esg_tit": "Environmental, Social, Governance (ESG)",
+        "esg_desc": "Mining is transitioning to Net Zero. This module quantifies our **Carbon Footprint (Scope 1 & 2)** and simulates the economic impact of decarbonization strategies like Solar PV.",
+        
+        "carb_tit": "1. Scope 1 & Carbon Tax Calculator",
+        "carb_desc": "Calculate annual CO2 emissions from Diesel Fleet (Haul Trucks) and approximate Carbon Tax liability.",
+        "solar_tit": "2. Decarbonization Simulator: Solar Farm",
+        "solar_desc": "Estimate the emission reduction and fuel savings from replacing Diesel Gen-sets/Grid power with a 50MW Solar Farm.",
+        "ins_esg": "**Strategic Sustainability:** Implementing a 20% Solar mix reduces Scope 2 emissions by 15,000 tonnes/year. Although CAPEX is high ($30M), the Carbon Tax savings ($80/ton) make the project NPV positive in Year 4.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -184,6 +194,16 @@ TRANSLATIONS = {
         "ref_tit": "3. Hilir (Downstream): Optimasi Pengolahan Minyak",
         "ref_desc": "Simulasi **Crude Distillation Unit (CDU)**. Kita menghitung 'Gross Product Worth (GPW)' dengan memecah minyak mentah menjadi fraksi (LPG, Bensin, Solar, Avtur) berdasarkan API Gravity.",
         "ins_ref": "**Ekonomi Kilang:** Mengolah minyak 'Light Sweet' menghasilkan 15% lebih banyak Bensin dibanding 'Heavy Sour', memberikan keuntungan margin +$12/bbl meskipun harga bahan baku lebih mahal.",
+
+        "esg_nav": "Keberlanjutan & ESG (Net Zero)",
+        "esg_tit": "Environmental, Social, Governance (ESG)",
+        "esg_desc": "Industri tambang beralih ke Net Zero. Modul ini menghitung **Jejak Karbon (Scope 1 & 2)** dan mensimulasikan dampak ekonomi dari strategi dekarbonisasi seperti Panel Surya.",
+        
+        "carb_tit": "1. Kalkulator Pajak Karbon & Scope 1",
+        "carb_desc": "Menghitung emisi CO2 tahunan dari Armada Diesel (Haul Trucks) dan estimasi kewajiban Pajak Karbon.",
+        "solar_tit": "2. Simulator Dekarbonisasi: Solar Farm",
+        "solar_desc": "Estimasi pengurangan emisi dan penghematan BBM dari penggantian Genset Diesel/PLN dengan 50MW Solar Farm.",
+        "ins_esg": "**Strategi Keberlanjutan:** Menerapkan bauran energi Surya 20% mengurangi emisi Scope 2 sebesar 15.000 ton/tahun. Meskipun CAPEX tinggi ($30 Juta), penghematan Pajak Karbon ($80/ton) membuat NPV proyek positif di Tahun ke-4.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",

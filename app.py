@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -811,6 +811,85 @@ elif page == t['energy_nav']:
 
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.success(t['ins_ref'])
+
+# --- Page: ESG & Sustainability ---
+elif page == t['esg_nav']:
+    st.title(t['esg_tit'])
+    st.markdown(t['esg_desc'])
+    
+    # --- Tab 1: Carbon Calculator ---
+    st.header(t['carb_tit'])
+    st.markdown(t['carb_desc'])
+    
+    esg_col1, esg_col2 = st.columns([1, 1.5])
+    
+    with esg_col1:
+        st.subheader("Fleet Parameters")
+        n_trucks = st.number_input("Number of Dump Trucks", 10, 200, 50)
+        fuel_burn = st.number_input("Fuel Burn Rate (L/hr per Truck)", 50, 500, 150)
+        op_hours = st.number_input("Operating Hours/Year", 1000, 8760, 6000)
+        diesel_price = st.number_input("Diesel Price ($/L)", 0.5, 2.0, 1.2)
+        
+    with esg_col2:
+        st.subheader("Emissions Output")
+        
+        # Calculations
+        total_fuel_L = n_trucks * fuel_burn * op_hours
+        total_cost_fuel = total_fuel_L * diesel_price
+        
+        # Emission Factor: ~2.68 kg CO2 per Litre of Diesel
+        co2_tonnes = (total_fuel_L * 2.68) / 1000
+        
+        carbon_tax = st.slider("Scenario: Carbon Tax ($/tonne CO2)", 0, 200, 85, help="Future tax liability assumption")
+        tax_liability = co2_tonnes * carbon_tax
+        
+        c1, c2 = st.columns(2)
+        c1.metric("Total CO2 Emissions", f"{co2_tonnes:,.0f} tCO2e", delta="Scope 1")
+        c2.metric("Est. Carbon Tax Liability", f"${tax_liability/1000000:.2f} M", delta=f"@ ${carbon_tax}/t", delta_color="inverse")
+        
+        st.metric("Total Annual Fuel Cost", f"${total_cost_fuel/1000000:.1f} M")
+
+    st.divider()
+    
+    # --- Tab 2: Decarbonization (Solar) ---
+    st.header(t['solar_tit'])
+    st.markdown(t['solar_desc'])
+    
+    sol_col1, sol_col2 = st.columns([1, 2])
+    
+    with sol_col1:
+        st.subheader("Decarbonization Plan")
+        solar_mix = st.slider("Solar Energy Penetration (%)", 0, 100, 20)
+        grid_emission_factor = 0.85 # kg CO2/kWh (Coal heavy grid)
+        
+    with sol_col2:
+        # Simplified: Assume Scope 2 (Grid) is roughly equal to Scope 1 for this mine size
+        # Baseline Scope 2
+        baseline_scope2 = co2_tonnes * 0.8 # Assumption
+        
+        # Abatement
+        abatement = baseline_scope2 * (solar_mix / 100)
+        residual = baseline_scope2 - abatement
+        
+        # Waterfall Chart
+        fig_esg = go.Figure(go.Waterfall(
+            name = "20", orientation = "v",
+            measure = ["relative", "relative", "total"],
+            x = ["Baseline Scope 2", "Solar Abatement", "Residual Emissions"],
+            textposition = "outside",
+            text = [f"{baseline_scope2/1000:.1f}k", f"-{abatement/1000:.1f}k", f"{residual/1000:.1f}k"],
+            y = [baseline_scope2, -abatement, residual],
+            connector = {"line":{"color":"rgb(63, 63, 63)"}},
+        ))
+        
+        fig_esg.update_layout(title="Net Zero Journey: Scope 2 Reduction", 
+                              yaxis_title="Tonnes CO2e",
+                              template="plotly_dark")
+        
+        st.plotly_chart(fig_esg, use_container_width=True)
+
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.info(t['ins_esg'])
 
 st.markdown("---")
 st.caption(t['footer'])
