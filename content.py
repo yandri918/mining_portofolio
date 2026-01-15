@@ -79,6 +79,16 @@ TRANSLATIONS = {
         "solar_desc": "Estimate the emission reduction and fuel savings from replacing Diesel Gen-sets/Grid power with a 50MW Solar Farm.",
         "ins_esg": "**Strategic Sustainability:** Implementing a 20% Solar mix reduces Scope 2 emissions by 15,000 tonnes/year. Although CAPEX is high ($30M), the Carbon Tax savings ($80/ton) make the project NPV positive in Year 4.",
 
+        "ops_nav": "Daily Ops Dashboard",
+        "ops_tit": "Interactive Production Reporting",
+        "ops_desc": "Submit daily production data and visualize operational KPIs in real-time. This simulates a live mine operations dashboard.",
+        "ops_form_tit": "Submit Daily Report",
+        "ops_viz_tit": "Live Operations Analytics",
+        "ops_submit": "Submit Report",
+        "ops_clear": "Clear All Data",
+        "ops_export": "Export to CSV",
+        "ins_ops": "**Operational Excellence:** The interactive dashboard enables shift supervisors to track daily performance trends and identify bottlenecks immediately, reducing response time from 24 hours to real-time.",
+
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Operational Insight",
         "ins_trifr": "**Safety Trend:** While LTI frequency is low, the TRIFR spike in June correlates with the new contractor onboarding period. **Recommendation:** Review induction training effectiveness for contractor workforce.",
@@ -204,6 +214,16 @@ TRANSLATIONS = {
         "solar_tit": "2. Simulator Dekarbonisasi: Solar Farm",
         "solar_desc": "Estimasi pengurangan emisi dan penghematan BBM dari penggantian Genset Diesel/PLN dengan 50MW Solar Farm.",
         "ins_esg": "**Strategi Keberlanjutan:** Menerapkan bauran energi Surya 20% mengurangi emisi Scope 2 sebesar 15.000 ton/tahun. Meskipun CAPEX tinggi ($30 Juta), penghematan Pajak Karbon ($80/ton) membuat NPV proyek positif di Tahun ke-4.",
+
+        "ops_nav": "Dashboard Operasi Harian",
+        "ops_tit": "Pelaporan Produksi Interaktif",
+        "ops_desc": "Submit data produksi harian dan visualisasikan KPI operasional secara real-time. Ini mensimulasikan dashboard operasi tambang yang live.",
+        "ops_form_tit": "Submit Laporan Harian",
+        "ops_viz_tit": "Analitik Operasi Live",
+        "ops_submit": "Kirim Laporan",
+        "ops_clear": "Hapus Semua Data",
+        "ops_export": "Ekspor ke CSV",
+        "ins_ops": "**Keunggulan Operasional:** Dashboard interaktif memungkinkan supervisor shift melacak tren kinerja harian dan mengidentifikasi bottleneck secara langsung, mengurangi waktu respons dari 24 jam menjadi real-time.",
 
         # --- Professional Insights (New) ---
         "ins_safe_tit": "💡 Wawasan Operasional",

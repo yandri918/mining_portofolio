@@ -21,7 +21,7 @@ with st.sidebar:
     t = TRANSLATIONS[lang_choice]
     
     st.title(t['sidebar_title'])
-    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
+    page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav'], t['safety_nav'], t['prod_nav'], t['ops_nav'], t['opt_nav'], t['mc_nav'], t['energy_nav'], t['esg_nav'], t['pbi_nav']])
     
     st.markdown("---")
     # Contact info removed as requested
@@ -397,6 +397,97 @@ elif page == t['prod_nav']:
     
     with st.expander(t['ins_safe_tit'], expanded=True):
         st.warning(t['ins_fleet'])
+
+# --- Page: Daily Operations Dashboard ---
+elif page == t['ops_nav']:
+    st.title(t['ops_tit'])
+    st.markdown(t['ops_desc'])
+    
+    # Initialize session state for data storage
+    if 'ops_data' not in st.session_state:
+        st.session_state.ops_data = pd.DataFrame(columns=['Date', 'Tonnage', 'Grade', 'Fuel_L', 'Incidents'])
+    
+    col_form, col_viz = st.columns([1, 2])
+    
+    with col_form:
+        st.subheader(t['ops_form_tit'])
+        
+        with st.form("daily_report_form"):
+            report_date = st.date_input("Report Date", pd.Timestamp.today())
+            tonnage = st.number_input("Ore Tonnage Hauled (tonnes)", 0, 50000, 10000, step=500)
+            grade = st.number_input("Average Gold Grade (g/t)", 0.0, 10.0, 1.5, step=0.1)
+            fuel = st.number_input("Fuel Consumed (Liters)", 0, 100000, 15000, step=500)
+            incidents = st.number_input("Safety Incidents", 0, 10, 0)
+            
+            submitted = st.form_submit_button(t['ops_submit'])
+            
+            if submitted:
+                new_row = pd.DataFrame({
+                    'Date': [report_date],
+                    'Tonnage': [tonnage],
+                    'Grade': [grade],
+                    'Fuel_L': [fuel],
+                    'Incidents': [incidents]
+                })
+                st.session_state.ops_data = pd.concat([st.session_state.ops_data, new_row], ignore_index=True)
+                st.success(f"✅ Report for {report_date} submitted!")
+        
+        st.markdown("---")
+        
+        # Clear and Export buttons
+        if st.button(t['ops_clear'], type="secondary"):
+            st.session_state.ops_data = pd.DataFrame(columns=['Date', 'Tonnage', 'Grade', 'Fuel_L', 'Incidents'])
+            st.rerun()
+        
+        if len(st.session_state.ops_data) > 0:
+            csv = st.session_state.ops_data.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label=t['ops_export'],
+                data=csv,
+                file_name='daily_ops_report.csv',
+                mime='text/csv',
+            )
+    
+    with col_viz:
+        st.subheader(t['ops_viz_tit'])
+        
+        if len(st.session_state.ops_data) > 0:
+            df_ops = st.session_state.ops_data.copy()
+            df_ops['Date'] = pd.to_datetime(df_ops['Date'])
+            df_ops = df_ops.sort_values('Date')
+            
+            # KPI Cards
+            kpi1, kpi2, kpi3 = st.columns(3)
+            kpi1.metric("Total Production", f"{df_ops['Tonnage'].sum():,.0f} t")
+            kpi2.metric("Avg Grade", f"{df_ops['Grade'].mean():.2f} g/t")
+            kpi3.metric("Total Incidents", f"{int(df_ops['Incidents'].sum())}")
+            
+            # Line Chart: Tonnage & Grade Trend
+            fig_ops1 = go.Figure()
+            fig_ops1.add_trace(go.Scatter(x=df_ops['Date'], y=df_ops['Tonnage'], 
+                                          mode='lines+markers', name='Tonnage', 
+                                          line=dict(color='#3498DB', width=3)))
+            fig_ops1.update_layout(title="Daily Tonnage Trend", 
+                                   xaxis_title="Date", yaxis_title="Tonnes",
+                                   template="plotly_dark", height=300)
+            st.plotly_chart(fig_ops1, use_container_width=True)
+            
+            # Bar Chart: Fuel Efficiency
+            df_ops['Efficiency'] = df_ops['Tonnage'] / df_ops['Fuel_L']  # Tonnes per Liter
+            fig_ops2 = px.bar(df_ops, x='Date', y='Efficiency', 
+                              title="Fuel Efficiency (Tonnes/Liter)",
+                              color='Efficiency', color_continuous_scale='Greens')
+            fig_ops2.update_layout(template="plotly_dark", height=300)
+            st.plotly_chart(fig_ops2, use_container_width=True)
+            
+            # Data Table
+            st.markdown("**Recent Reports:**")
+            st.dataframe(df_ops.tail(10), use_container_width=True)
+        else:
+            st.info("📝 No data yet. Submit your first daily report using the form on the left!")
+    
+    with st.expander(t['ins_safe_tit'], expanded=True):
+        st.success(t['ins_ops'])
 
 # --- Page: Power BI + Python ---
 elif page == t['pbi_nav']:
