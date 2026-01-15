@@ -55,7 +55,10 @@ def load_and_process_data(filepath):
         
     # Melt for Plotly (Long Format)
     df_long = filtered_df.melt(id_vars=['Sector'], var_name='Year', value_name='GDP')
-    df_long['Year'] = df_long['Year'].astype(int)
+    
+    # invalid literal for int() with base 10: '2014/p' fix
+    # Remove non-numeric characters from Year (e.g. "2014/p" -> "2014")
+    df_long['Year'] = df_long['Year'].astype(str).str.replace(r'\D+', '', regex=True).astype(int)
     
     return df_long
 
