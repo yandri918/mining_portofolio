@@ -24,6 +24,13 @@ TRANSLATIONS = {
         "sub_fleet": "3. Load & Haul: Cycle Time Analysis",
         "desc_fleet": "Fleet management optimization by analyzing haul truck cycle line times to identify bottlenecks.",
 
+        "pbi_nav": "Power BI + Python Integration",
+        "pbi_tit": "Advanced Analytics in Power BI",
+        "pbi_desc": "Demonstrating how to inject Python Machine Learning into Power BI dashboards—a critical skill for Mining Intelligence.",
+        "pbi_sub": "Demo: Geological Domain Clustering",
+        "pbi_exp": "Power BI's native visuals are limited. By using Python scripts, we can perform advanced K-Means Clustering to automatically classify rock types based on assay data (Au, Cu, As).",
+        "pbi_code_tit": "The Python Script for Power BI:",
+
         "role": "Data Scientist | Mining Specialist",
         "intro_title": "Mining Data Science Portfolio",
         "intro_subtitle": "Ready for FIFO Opportunities in Australia",
@@ -84,6 +91,13 @@ TRANSLATIONS = {
         "desc_drill": "Dampak fragmentasi peledakan (ukuran P80) terhadap Dig Rate Excavator (t/jam). Peledakan lebih halus = penggalian lebih cepat.",
         "sub_fleet": "3. Load & Haul: Analisis Cycle Time",
         "desc_fleet": "Optimasi manajemen armada dengan menganalisis waktu siklus haul truck untuk mengidentifikasi bottleneck.",
+
+        "pbi_nav": "Integrasi Power BI + Python",
+        "pbi_tit": "Analitik Lanjutan di Power BI",
+        "pbi_desc": "Mendemonstrasikan cara menyisipkan Machine Learning Python ke dalam dashboard Power BI—keahlian kritis untuk Mining Intelligence.",
+        "pbi_sub": "Demo: Klasterisasi Domain Geologi",
+        "pbi_exp": "Visual bawaan Power BI terbatas. Dengan skrip Python, kita bisa melakukan K-Means Clustering canggih untuk mengklasifikasikan tipe batuan secara otomatis berdasarkan data assay (Au, Cu, As).",
+        "pbi_code_tit": "Skrip Python untuk Power BI:",
 
         "role": "Data Scientist | Spesialis Pertambangan",
         "intro_title": "Portofolio Data Science Pertambangan",
