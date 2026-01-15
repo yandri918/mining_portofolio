@@ -13,7 +13,11 @@ TRANSLATIONS = {
         I combine technical expertise in Python and Machine Learning with a practical understanding of mining operations.
         
         **Why Hire Me for FIFO?**
-        *   **Safety First:** I understand that safety is the #1 priority in mining. My data analysis always considers safety metrics.
+        *   **HSE Commitment (Health, Safety, Environment):** Safety is not just a priority, it's a core value. As a Data Scientist, I focus on:
+            *   *Incident Analysis:* Identifying trends from near-miss data and past incidents for prevention.
+            *   *Leading Indicators:* Monitoring proactive metrics like hazard reports, fatigue levels, and training compliance.
+            *   *Predictive Maintenance:* Using sensor data to predict heavy equipment failure before it endangers operators.
+            *   *Regulatory Compliance:* Ensuring data reporting aligns with Australian and Indonesian mining safety standards.
         *   **Resilient & Adaptable:** Physically and mentally prepared for the FIFO lifestyle and remote site conditions.
         *   **Operational Focus:** I don't just analyze numbers; I look for insights that drive operational efficiency and cost reduction.
         """,
@@ -50,7 +54,11 @@ TRANSLATIONS = {
         Saya menggabungkan keahlian teknis dalam Python dan Machine Learning dengan pemahaman praktis tentang operasi penambangan.
         
         **Mengapa Memilih Saya untuk FIFO?**
-        *   **Utamakan Keselamatan:** Saya mengerti bahwa keselamatan (K3) adalah prioritas #1. Analisis saya selalu mempertimbangkan metrik keselamatan.
+        *   **Komitmen K3 (Keselamatan & Kesehatan Kerja):** Keselamatan bukan sekadar prioritas, tapi nilai inti. Sebagai Data Scientist, saya berfokus pada:
+            *   *Analisis Insiden:* Mengidentifikasi tren dari data near-miss dan insiden masa lalu untuk pencegahan.
+            *   *Leading Indicators:* Memantau metrik proaktif seperti laporan bahaya, tingkat kelelahan, dan kepatuhan pelatihan.
+            *   *Predictive Maintenance:* Menggunakan data sensor untuk memprediksi kegagalan alat berat sebelum membahayakan operator.
+            *   *Kepatuhan Regulasi:* Memastikan pelaporan data sesuai dengan standar keselamatan pertambangan Australia dan Indonesia.
         *   **Tangguh & Beradaptasi:** Siap secara fisik dan mental untuk gaya hidup FIFO dan kondisi kerja di lokasi terpencil (site).
         *   **Fokus Operasional:** Saya tidak hanya menganalisis angka; saya mencari wawasan yang mendorong efisiensi operasional dan pengurangan biaya.
         """,
