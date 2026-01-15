@@ -24,10 +24,7 @@ with st.sidebar:
     page = st.radio("Go to", [t['home_nav'], t['analysis_nav'], t['forecast_nav']])
     
     st.markdown("---")
-    st.markdown(f"**{t['contact_tit']}**")
-    st.markdown("📧 yandri918@gmail.com") # Using username from path as placeholder, user can update
-    st.markdown("🔗 [LinkedIn Profile](#)")
-    st.markdown("🐙 [GitHub Repo](#)")
+    # Contact info removed as requested
 
 # --- Load Data ---
 try:
