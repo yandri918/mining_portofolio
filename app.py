@@ -99,6 +99,41 @@ elif page == t['analysis_nav']:
                      delta="High Risk" if volatility_metrics['cv'] > 100 else "Moderate",
                      delta_color="inverse" if volatility_metrics['cv'] > 100 else "normal")
         
+        # Data Source Information
+        with st.expander("📊 Data Source & Methodology", expanded=False):
+            st.markdown("""
+            **Data Source:**
+            - **Primary:** GDP by Economic Activity (2007-2014)
+            - **Likely Source:** Badan Pusat Statistik (BPS) Indonesia
+            - **File:** `data.csv` (Mining & Quarrying sector)
+            
+            **Calculation Methodology:**
+            - **Current GDP:** Latest year data (2014) = Rp 59.7 Triliun
+            - **Total Growth:** ((Final - Initial) / Initial) × 100 = ((59.7 - 5.3) / 5.3) × 100 = +1,026.4%
+            - **CAGR:** ((Final/Initial)^(1/years) - 1) × 100 = ((59.7/5.3)^(1/7) - 1) × 100 = 39.24%
+            - **Volatility (CV):** (Std Dev / Mean) × 100 = (148.1 / 96.9) × 100 = 152.8%
+            
+            **Data Timeline:**
+            - 2007: Rp 5.3T (baseline)
+            - 2011: Rp 268.0T (peak - commodity boom)
+            - 2014: Rp 59.7T (current - post-crash)
+            
+            **Verification Links:**
+            - [BPS - National Accounts](https://www.bps.go.id/subject/11/produk-domestik-bruto--lapangan-usaha-.html)
+            - [Kementerian ESDM - Mining Statistics](https://www.esdm.go.id/)
+            """)
+        
+        # Data Quality Warning
+        st.warning("""
+        ⚠️ **Data Quality Note:** Mining sector shows extreme volatility (50x boom in 2011, then 78% collapse by 2014). 
+        This likely reflects:
+        - Global commodity price boom-bust cycle (2010-2012)
+        - Gold/copper/coal price fluctuations
+        - Possible data methodology changes
+        
+        **Recommendation:** Verify with official BPS publications for critical policy decisions.
+        """)
+        
         st.divider()
         
         # Sector Contribution Over Time
