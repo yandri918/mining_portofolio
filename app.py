@@ -59,42 +59,449 @@ if page == t['home_nav']:
 
 # --- Page: Analysis ---
 elif page == t['analysis_nav']:
-    st.title(t['charts_tit'])
-    st.markdown(t['charts_desc'])
+    st.title("📊 Advanced Mining Sector & GDP Analysis")
+    st.markdown("Comprehensive economic analysis with volatility metrics, comparative insights, and policy implications.")
     
-    # Metrics Table
-    if mining_stats:
-        m1, m2, m3 = st.columns(3)
-        m1.metric("Mining GDP (Latest)", f"{mining_stats['current_gdp']:,.1f}")
-        m2.metric(t['metric_growth'], f"{mining_stats['total_growth_pct']:.1f}%")
-        m3.metric(t['metric_cagr'], f"{mining_stats['cagr_pct']:.1f}%")
+    # Import additional functions
+    from data_processor import (calculate_sector_contribution, calculate_volatility_metrics,
+                                decompose_growth, calculate_correlation_matrix, generate_forecast,
+                                calculate_multiplier_effect, generate_policy_recommendations)
     
-    st.divider()
+    # Calculate advanced metrics
+    contribution_df = calculate_sector_contribution(df)
+    volatility_metrics = calculate_volatility_metrics(df, 'Mining')
+    growth_decomp = decompose_growth(df, 'Mining')
+    corr_matrix = calculate_correlation_matrix(df)
+    forecast_df = generate_forecast(df, 'Mining', periods=5)
+    multiplier_data = calculate_multiplier_effect(df)
+    policy_recs = generate_policy_recommendations(volatility_metrics, contribution_df)
     
-    # 1. Comparison Chart
-    fig_line = px.line(
-        df, 
-        x='Year', 
-        y='GDP', 
-        color='Sector',
-        markers=True,
-        title='GDP Trends by Economic Activity (2007-2014)',
-        template="plotly_dark"
-    )
-    st.plotly_chart(fig_line, use_container_width=True)
+    # Create tabs for different analyses
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "📈 Overview & Contribution",
+        "⚠️ Volatility Analysis", 
+        "🔍 Comparative Analysis",
+        "🔮 Advanced Forecasting",
+        "🏛️ Policy Dashboard"
+    ])
     
-    # 2. Mining Specific Focus
-    mining_data = df[df['Sector'] == 'Mining']
-    fig_bar = px.bar(
-        mining_data,
-        x='Year',
-        y='GDP',
-        text_auto=True,
-        title='Mining Sector Growth Focus',
-        color='GDP',
-        color_continuous_scale='Viridis'
-    )
-    st.plotly_chart(fig_bar, use_container_width=True)
+    # ========== TAB 1: OVERVIEW & CONTRIBUTION ==========
+    with tab1:
+        st.subheader("Mining Sector Overview")
+        
+        # Enhanced Metrics
+        if mining_stats and volatility_metrics:
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Current GDP", f"Rp {mining_stats['current_gdp']:,.1f}T")
+            m2.metric("Total Growth", f"{mining_stats['total_growth_pct']:+.1f}%")
+            m3.metric("CAGR", f"{mining_stats['cagr_pct']:.2f}%")
+            m4.metric("Volatility (CV)", f"{volatility_metrics['cv']:.1f}%", 
+                     delta="High Risk" if volatility_metrics['cv'] > 100 else "Moderate",
+                     delta_color="inverse" if volatility_metrics['cv'] > 100 else "normal")
+        
+        st.divider()
+        
+        # Sector Contribution Over Time
+        st.markdown("### Sector Contribution to Total GDP")
+        
+        mining_contrib = contribution_df[contribution_df['Sector'] == 'Mining']
+        
+        fig_contrib = go.Figure()
+        fig_contrib.add_trace(go.Scatter(
+            x=mining_contrib['Year'],
+            y=mining_contrib['Contribution_%'],
+            mode='lines+markers',
+            name='Mining % of GDP',
+            line=dict(color='#E67E22', width=3),
+            marker=dict(size=10)
+        ))
+        
+        fig_contrib.update_layout(
+            title="Mining Sector Contribution to Total GDP (%)",
+            xaxis_title="Year",
+            yaxis_title="Contribution (%)",
+            template="plotly_dark",
+            height=400
+        )
+        
+        st.plotly_chart(fig_contrib, use_container_width=True)
+        
+        # Sector Comparison Pie Chart (Latest Year)
+        st.markdown("### Sector Composition (2014)")
+        
+        latest_year = contribution_df['Year'].max()
+        latest_data = contribution_df[contribution_df['Year'] == latest_year]
+        
+        fig_pie = px.pie(
+            latest_data,
+            values='GDP',
+            names='Sector',
+            title=f"GDP Composition by Sector ({latest_year})",
+            hole=0.4,
+            color_discrete_sequence=px.colors.qualitative.Set3
+        )
+        
+        fig_pie.update_layout(template="plotly_dark", height=400)
+        st.plotly_chart(fig_pie, use_container_width=True)
+        
+        # Growth Decomposition
+        if growth_decomp is not None and len(growth_decomp) > 0:
+            st.markdown("### Year-over-Year Growth Decomposition")
+            
+            fig_waterfall = go.Figure(go.Waterfall(
+                x=growth_decomp['Year'].astype(str),
+                y=growth_decomp['Absolute_Growth'],
+                text=[f"{val:+.1f}T" for val in growth_decomp['Absolute_Growth']],
+                textposition="outside",
+                connector={"line": {"color": "rgb(63, 63, 63)"}},
+                increasing={"marker": {"color": "#2ECC71"}},
+                decreasing={"marker": {"color": "#E74C3C"}}
+            ))
+            
+            fig_waterfall.update_layout(
+                title="Mining Sector Growth Waterfall (Absolute Change)",
+                xaxis_title="Year",
+                yaxis_title="Change in GDP (Trillion Rp)",
+                template="plotly_dark",
+                height=400
+            )
+            
+            st.plotly_chart(fig_waterfall, use_container_width=True)
+    
+    # ========== TAB 2: VOLATILITY ANALYSIS ==========
+    with tab2:
+        st.subheader("Volatility & Risk Analysis")
+        
+        if volatility_metrics:
+            # Volatility Metrics Cards
+            v1, v2, v3 = st.columns(3)
+            v1.metric("Standard Deviation", f"Rp {volatility_metrics['std_dev']:.1f}T")
+            v2.metric("Coefficient of Variation", f"{volatility_metrics['cv']:.1f}%")
+            v3.metric("Mean GDP", f"Rp {volatility_metrics['mean_gdp']:.1f}T")
+            
+            st.divider()
+            
+            # Peak and Trough Analysis
+            st.markdown("### Boom-Bust Cycle Analysis")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.success(f"**Peak Year:** {volatility_metrics['peak_year']}")
+                st.metric("Peak GDP", f"Rp {volatility_metrics['peak_value']:.1f}T")
+            
+            with col2:
+                st.error(f"**Trough Year:** {volatility_metrics['trough_year']}")
+                st.metric("Trough GDP", f"Rp {volatility_metrics['trough_value']:.1f}T")
+            
+            if abs(volatility_metrics['drop_pct']) > 0:
+                st.warning(f"📉 **Peak-to-Trough Drop:** {abs(volatility_metrics['drop_pct']):.1f}%")
+            
+            st.divider()
+            
+            # Volatility Visualization
+            mining_data = df[df['Sector'] == 'Mining'].sort_values('Year')
+            
+            fig_vol = go.Figure()
+            
+            # GDP Line
+            fig_vol.add_trace(go.Scatter(
+                x=mining_data['Year'],
+                y=mining_data['GDP'],
+                mode='lines+markers',
+                name='Mining GDP',
+                line=dict(color='#3498DB', width=3),
+                marker=dict(size=10)
+            ))
+            
+            # Mean line
+            fig_vol.add_hline(
+                y=volatility_metrics['mean_gdp'],
+                line_dash="dash",
+                line_color="white",
+                annotation_text=f"Mean: {volatility_metrics['mean_gdp']:.1f}T"
+            )
+            
+            # Peak and Trough markers
+            fig_vol.add_trace(go.Scatter(
+                x=[volatility_metrics['peak_year']],
+                y=[volatility_metrics['peak_value']],
+                mode='markers',
+                name='Peak',
+                marker=dict(size=20, color='green', symbol='star')
+            ))
+            
+            fig_vol.add_trace(go.Scatter(
+                x=[volatility_metrics['trough_year']],
+                y=[volatility_metrics['trough_value']],
+                mode='markers',
+                name='Trough',
+                marker=dict(size=20, color='red', symbol='x')
+            ))
+            
+            fig_vol.update_layout(
+                title="Mining Sector Volatility: Peak, Trough, and Mean",
+                xaxis_title="Year",
+                yaxis_title="GDP (Trillion Rp)",
+                template="plotly_dark",
+                height=500
+            )
+            
+            st.plotly_chart(fig_vol, use_container_width=True)
+            
+            # Risk Assessment
+            st.markdown("### Risk Assessment")
+            
+            if volatility_metrics['cv'] > 150:
+                st.error("🔴 **EXTREME VOLATILITY** - Sector shows very high instability. Urgent diversification needed.")
+            elif volatility_metrics['cv'] > 100:
+                st.warning("🟡 **HIGH VOLATILITY** - Sector is highly volatile. Implement risk mitigation strategies.")
+            else:
+                st.success("🟢 **MODERATE VOLATILITY** - Sector volatility is within acceptable range.")
+    
+    # ========== TAB 3: COMPARATIVE ANALYSIS ==========
+    with tab3:
+        st.subheader("Comparative Sector Analysis")
+        
+        # Multi-Sector Comparison
+        st.markdown("### GDP Trends: Mining vs Other Sectors")
+        
+        major_sectors = df[df['Sector'].isin(['Mining', 'Agriculture', 'Manufacturing', 'Construction'])]
+        
+        fig_compare = px.line(
+            major_sectors,
+            x='Year',
+            y='GDP',
+            color='Sector',
+            markers=True,
+            title="Sector Comparison (2007-2014)",
+            template="plotly_dark"
+        )
+        
+        fig_compare.update_layout(height=500)
+        st.plotly_chart(fig_compare, use_container_width=True)
+        
+        st.divider()
+        
+        # Correlation Heatmap
+        if corr_matrix is not None:
+            st.markdown("### Sector Correlation Matrix")
+            
+            fig_corr = px.imshow(
+                corr_matrix,
+                text_auto='.2f',
+                color_continuous_scale='RdBu_r',
+                aspect="auto",
+                title="Correlation Between Sectors"
+            )
+            
+            fig_corr.update_layout(template="plotly_dark", height=400)
+            st.plotly_chart(fig_corr, use_container_width=True)
+            
+            st.info("💡 **Interpretation:** Values close to +1 indicate strong positive correlation, -1 indicates negative correlation.")
+        
+        st.divider()
+        
+        # Sector Rankings
+        st.markdown("### Sector Performance Rankings (2014)")
+        
+        latest_contrib = contribution_df[contribution_df['Year'] == contribution_df['Year'].max()]
+        latest_contrib = latest_contrib.sort_values('GDP', ascending=False)
+        
+        fig_rank = px.bar(
+            latest_contrib,
+            x='Sector',
+            y='GDP',
+            text_auto='.1f',
+            title="Sector GDP Rankings",
+            color='GDP',
+            color_continuous_scale='Viridis'
+        )
+        
+        fig_rank.update_layout(template="plotly_dark", height=400)
+        st.plotly_chart(fig_rank, use_container_width=True)
+    
+    # ========== TAB 4: ADVANCED FORECASTING ==========
+    with tab4:
+        st.subheader("Multi-Method Forecasting (2015-2019)")
+        
+        if forecast_df is not None:
+            # Historical + Forecast
+            mining_historical = df[df['Sector'] == 'Mining'].sort_values('Year')
+            
+            fig_forecast = go.Figure()
+            
+            # Historical data
+            fig_forecast.add_trace(go.Scatter(
+                x=mining_historical['Year'],
+                y=mining_historical['GDP'],
+                mode='lines+markers',
+                name='Historical',
+                line=dict(color='#3498DB', width=3)
+            ))
+            
+            # Linear Forecast
+            fig_forecast.add_trace(go.Scatter(
+                x=forecast_df['Year'],
+                y=forecast_df['Linear_Forecast'],
+                mode='lines+markers',
+                name='Linear Regression',
+                line=dict(color='#E74C3C', width=2, dash='dash')
+            ))
+            
+            # Exponential Smoothing
+            fig_forecast.add_trace(go.Scatter(
+                x=forecast_df['Year'],
+                y=forecast_df['Exp_Smooth_Forecast'],
+                mode='lines+markers',
+                name='Exp. Smoothing',
+                line=dict(color='#2ECC71', width=2, dash='dot')
+            ))
+            
+            # Confidence Interval
+            fig_forecast.add_trace(go.Scatter(
+                x=forecast_df['Year'],
+                y=forecast_df['CI_Upper'],
+                mode='lines',
+                name='CI Upper',
+                line=dict(width=0),
+                showlegend=False
+            ))
+            
+            fig_forecast.add_trace(go.Scatter(
+                x=forecast_df['Year'],
+                y=forecast_df['CI_Lower'],
+                mode='lines',
+                name='95% Confidence Interval',
+                fill='tonexty',
+                fillcolor='rgba(231, 76, 60, 0.2)',
+                line=dict(width=0)
+            ))
+            
+            fig_forecast.update_layout(
+                title="Mining Sector Forecast: Multi-Method Comparison",
+                xaxis_title="Year",
+                yaxis_title="GDP (Trillion Rp)",
+                template="plotly_dark",
+                height=500
+            )
+            
+            st.plotly_chart(fig_forecast, use_container_width=True)
+            
+            # Forecast Table
+            st.markdown("### Forecast Summary")
+            
+            forecast_display = forecast_df.copy()
+            forecast_display.columns = ['Year', 'Linear (Rp T)', 'Exp. Smooth (Rp T)', 'CI Upper', 'CI Lower']
+            
+            st.dataframe(forecast_display.style.format({
+                'Linear (Rp T)': '{:.1f}',
+                'Exp. Smooth (Rp T)': '{:.1f}',
+                'CI Upper': '{:.1f}',
+                'CI Lower': '{:.1f}'
+            }), use_container_width=True)
+            
+            st.info("💡 **Note:** Forecasts are for demonstration. Real-world mining forecasts should incorporate commodity prices, production volumes, and global demand.")
+    
+    # ========== TAB 5: POLICY DASHBOARD ==========
+    with tab5:
+        st.subheader("Policy Implications & Recommendations")
+        
+        # Automated Recommendations
+        if policy_recs:
+            st.markdown("### 🎯 Automated Policy Recommendations")
+            
+            for rec in policy_recs:
+                if rec['type'] == 'warning':
+                    st.warning(f"**{rec['title']}**\n\n{rec['message']}")
+                elif rec['type'] == 'alert':
+                    st.error(f"**{rec['title']}**\n\n{rec['message']}")
+                else:
+                    st.info(f"**{rec['title']}**\n\n{rec['message']}")
+        else:
+            st.success("✅ No critical policy issues detected.")
+        
+        st.divider()
+        
+        # Economic Multiplier
+        if multiplier_data:
+            st.markdown("### 💰 Economic Multiplier Effect")
+            
+            st.metric("Mining Sector Multiplier", f"{multiplier_data['avg_multiplier']:.2f}x")
+            
+            st.info(f"💡 **Interpretation:** Every Rp 1 Trillion change in Mining GDP leads to approximately Rp {multiplier_data['avg_multiplier']:.2f} Trillion change in total GDP.")
+        
+        st.divider()
+        
+        # Policy Scorecard
+        st.markdown("### 📊 Policy Scorecard")
+        
+        # Calculate scores
+        volatility_score = max(0, 100 - volatility_metrics['cv']) if volatility_metrics else 50
+        contribution_score = (mining_contrib.iloc[-1]['Contribution_%'] / 10) * 100 if len(mining_contrib) > 0 else 50
+        growth_score = max(0, min(100, mining_stats['cagr_pct'] * 10)) if mining_stats else 50
+        
+        overall_score = (volatility_score + contribution_score + growth_score) / 3
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        col1.metric("Stability Score", f"{volatility_score:.0f}/100")
+        col2.metric("Contribution Score", f"{contribution_score:.0f}/100")
+        col3.metric("Growth Score", f"{growth_score:.0f}/100")
+        col4.metric("Overall Score", f"{overall_score:.0f}/100")
+        
+        # Gauge Chart
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=overall_score,
+            title={'text': "Mining Sector Health Index"},
+            gauge={
+                'axis': {'range': [0, 100]},
+                'bar': {'color': "darkblue"},
+                'steps': [
+                    {'range': [0, 33], 'color': "#E74C3C"},
+                    {'range': [33, 66], 'color': "#F39C12"},
+                    {'range': [66, 100], 'color': "#2ECC71"}
+                ],
+                'threshold': {
+                    'line': {'color': "white", 'width': 4},
+                    'thickness': 0.75,
+                    'value': 70
+                }
+            }
+        ))
+        
+        fig_gauge.update_layout(template="plotly_dark", height=300)
+        st.plotly_chart(fig_gauge, use_container_width=True)
+        
+        # Strategic Recommendations
+        st.markdown("### 🎯 Strategic Recommendations")
+        
+        if overall_score < 50:
+            st.error("""
+            **URGENT ACTION REQUIRED:**
+            1. Implement economic diversification programs
+            2. Reduce dependency on mining sector
+            3. Develop alternative revenue sources
+            4. Establish sovereign wealth fund for resource revenues
+            """)
+        elif overall_score < 70:
+            st.warning("""
+            **MODERATE IMPROVEMENTS NEEDED:**
+            1. Monitor sector volatility closely
+            2. Strengthen fiscal buffers
+            3. Invest in downstream processing
+            4. Enhance regulatory framework
+            """)
+        else:
+            st.success("""
+            **SECTOR PERFORMING WELL:**
+            1. Maintain current policies
+            2. Continue monitoring global commodity trends
+            3. Invest in sustainable mining practices
+            4. Develop value-added industries
+            """)
+
 
 # --- Page: Forecast ---
 elif page == t['forecast_nav']:
